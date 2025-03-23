@@ -1,0 +1,7 @@
+**/*.log
+requirements/*
+deploy/*
+docker*
+*.md
+*.yaml
+.*
