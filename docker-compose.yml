@@ -25,7 +25,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      - PORT=7001
+      - PORT=8080
     command:
       [
         "./userapi",
@@ -33,4 +33,13 @@ services:
         "postgresql://postgres:postgres@postgres:5432/user-management?sslmode=disable&timeout=5s",
       ]
     ports:
-      - "7001:7001"
+      - "8081:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8082:80"
+    depends_on:
+      - backend
