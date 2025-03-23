@@ -219,14 +219,14 @@ const docTemplate = `{
                 "firstName": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "lastName": {
                     "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
-                },
-                "userId": {
-                    "type": "integer"
                 },
                 "userName": {
                     "type": "string"

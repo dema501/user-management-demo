@@ -21,7 +21,7 @@ COPY --from=builder --chown=nonroot:nonroot /app/usercli .
 COPY --from=builder --chown=nonroot:nonroot /app/docs/swagger ./docs/swagger
 
 # Set default port (can be overridden at runtime)
-ENV PORT=8300
+ENV PORT=8080
 
 # Expose the port that will be used (note: this is just documentation)
 EXPOSE $PORT
