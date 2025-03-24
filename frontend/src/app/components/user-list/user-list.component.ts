@@ -11,6 +11,7 @@ import { UserFormComponent } from "../user-form/user-form.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatButtonModule } from "@angular/material/button";
+import { MatSortModule } from "@angular/material/sort";
 
 @Component({
   selector: "app-user-list",
@@ -22,6 +23,7 @@ import { MatButtonModule } from "@angular/material/button";
     MatTableModule,
     MatButtonModule,
     MatIconModule,
+    MatSortModule,
   ],
 })
 export class UserListComponent implements OnInit {

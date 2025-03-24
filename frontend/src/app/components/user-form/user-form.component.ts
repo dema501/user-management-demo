@@ -18,7 +18,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatRadioModule } from "@angular/material/radio";
 
 import {
@@ -50,6 +50,7 @@ interface DialogData {
     MatRadioModule,
     MatButtonModule,
     MatIconModule,
+    MatSnackBarModule,
   ],
 })
 export class UserFormComponent implements OnInit {
@@ -144,6 +145,8 @@ export class UserFormComponent implements OnInit {
     } else {
       this.errorMessage = "An error occurred. Please try again.";
     }
+    // log error to console
+    // TBD report error to analytics service
     console.error(error);
   }
 
