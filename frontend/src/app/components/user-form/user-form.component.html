@@ -1,11 +1,15 @@
-<h2 mat-dialog-title>{{ data.mode === "create" ? "Create" : "Edit" }} User</h2>
+<h2 mat-dialog-title class="user-form__title">
+  {{ data.mode === "create" ? "Create" : "Edit" }} User
+</h2>
 
-<mat-dialog-content>
-  <form [formGroup]="userForm">
-    <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+<mat-dialog-content class="mat-typography user-form__content">
+  <form [formGroup]="userForm" class="user-form">
+    <mat-error *ngIf="errorMessage" class="user-form__error">{{
+      errorMessage
+    }}</mat-error>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Username</mat-label>
+    <mat-form-field appearance="outline" class="user-form__field">
+      <mat-label class="user-form__label">Username</mat-label>
       <input
         matInput
         formControlName="userName"
@@ -14,95 +18,129 @@
         maxlength="50"
         [readonly]="data.mode === 'edit'"
         [attr.disabled]="data.mode === 'edit' ? true : null"
+        class="user-form__input user-form__input--username"
       />
-      <mat-error *ngIf="userForm.get('userName')?.hasError('required')">
+      <mat-error
+        *ngIf="userForm.get('userName')?.hasError('required')"
+        class="user-form__error"
+      >
         Username is required
       </mat-error>
-      <mat-error *ngIf="userForm.get('userName')?.hasError('maxlength')">
+      <mat-error
+        *ngIf="userForm.get('userName')?.hasError('maxlength')"
+        class="user-form__error"
+      >
         Username cannot exceed 50 characters
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Email</mat-label>
+    <mat-form-field appearance="outline" class="user-form__field">
+      <mat-label class="user-form__label">Email</mat-label>
       <input
         matInput
         formControlName="email"
         placeholder="Enter email"
         required
         type="email"
+        class="user-form__input user-form__input--email"
       />
-      <mat-error *ngIf="userForm.get('email')?.hasError('required')">
+      <mat-error
+        *ngIf="userForm.get('email')?.hasError('required')"
+        class="user-form__error"
+      >
         Email is required
       </mat-error>
-      <mat-error *ngIf="userForm.get('email')?.hasError('email')">
+      <mat-error
+        *ngIf="userForm.get('email')?.hasError('email')"
+        class="user-form__error"
+      >
         Please enter a valid email address
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>First Name</mat-label>
+    <mat-form-field appearance="outline" class="user-form__field">
+      <mat-label class="user-form__label">First Name</mat-label>
       <input
         matInput
         formControlName="firstName"
         placeholder="Enter first name"
         required
+        class="user-form__input user-form__input--first-name"
       />
-      <mat-error *ngIf="userForm.get('firstName')?.hasError('required')">
+      <mat-error
+        *ngIf="userForm.get('firstName')?.hasError('required')"
+        class="user-form__error"
+      >
         First name is required
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Last Name</mat-label>
+    <mat-form-field appearance="outline" class="user-form__field">
+      <mat-label class="user-form__label">Last Name</mat-label>
       <input
         matInput
         formControlName="lastName"
         placeholder="Enter last name"
         required
+        class="user-form__input user-form__input--last-name"
       />
-      <mat-error *ngIf="userForm.get('lastName')?.hasError('required')">
+      <mat-error
+        *ngIf="userForm.get('lastName')?.hasError('required')"
+        class="user-form__error"
+      >
         Last name is required
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Department</mat-label>
+    <mat-form-field appearance="outline" class="user-form__field">
+      <mat-label class="user-form__label">Department</mat-label>
       <input
         matInput
         formControlName="department"
         placeholder="Enter department"
-        required
+        class="user-form__input user-form__input--department"
       />
-      <mat-error *ngIf="userForm.get('department')?.hasError('required')">
-        Department is required
-      </mat-error>
     </mat-form-field>
 
-    <div class="form-field">
-      <label class="status-label">User Status:</label>
-      <mat-radio-group formControlName="userStatus" required>
+    <div class="user-form__field user-form__field--status">
+      <label class="user-form__status-label">User Status:</label>
+      <mat-radio-group
+        formControlName="userStatus"
+        required
+        class="user-form__radio-group"
+      >
         <mat-radio-button
           *ngFor="let option of userStatusOptions"
           [value]="option.value"
+          class="user-form__radio-button"
         >
           {{ option.label }}
         </mat-radio-button>
       </mat-radio-group>
-      <mat-error *ngIf="userForm.get('userStatus')?.hasError('required')">
+      <mat-error
+        *ngIf="userForm.get('userStatus')?.hasError('required')"
+        class="user-form__error"
+      >
         User status is required
       </mat-error>
     </div>
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancel</button>
+<mat-dialog-actions align="end" class="user-form__actions">
+  <button
+    mat-button
+    mat-dialog-close
+    class="user-form__button user-form__button--cancel"
+  >
+    Cancel
+  </button>
   <button
     mat-raised-button
     color="primary"
     [disabled]="!userForm.valid"
     (click)="onSubmit()"
+    class="user-form__button user-form__button--submit"
   >
     {{ data.mode === "create" ? "Create" : "Save" }}
   </button>

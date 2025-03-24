@@ -53,13 +53,6 @@ func (s *userService) CreateUser(ctx context.Context, req models.UserCreateReque
 		return nil, errors.New("email already exists")
 	}
 
-	// Validate user status
-	if req.UserStatus != models.UserStatusActive &&
-		req.UserStatus != models.UserStatusInactive &&
-		req.UserStatus != models.UserStatusTerminated {
-		return nil, errors.New("invalid user status")
-	}
-
 	user := &models.User{
 		UserName:   req.UserName,
 		FirstName:  req.FirstName,
@@ -104,13 +97,6 @@ func (s *userService) UpdateUser(ctx context.Context, id int64, req models.UserU
 		if exists {
 			return nil, errors.New("email already exists")
 		}
-	}
-
-	// Validate user status
-	if req.UserStatus != models.UserStatusActive &&
-		req.UserStatus != models.UserStatusInactive &&
-		req.UserStatus != models.UserStatusTerminated {
-		return nil, errors.New("invalid user status")
 	}
 
 	user.UserName = req.UserName

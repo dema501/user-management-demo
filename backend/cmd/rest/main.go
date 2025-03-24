@@ -26,6 +26,7 @@ import (
 	"user-management/internal/config"
 	"user-management/internal/repository"
 	"user-management/internal/service"
+	"user-management/internal/validator"
 )
 
 const (
@@ -115,6 +116,9 @@ func main() {
 
 	// Create Echo instance
 	e := echo.New()
+
+	// Register validator
+	e.Validator = validator.New()
 
 	e.Use(slogecho.New(logger))
 	e.Use(middleware.Recover())

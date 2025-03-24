@@ -68,6 +68,7 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 // @Param user body models.UserCreateRequest true "User Data"
 // @Success 201 {object} models.User
 // @Failure 400 {object} map[string]string
+// @Failure 422 {object} map[string]string
 // @Router /users [post]
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -77,7 +78,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 	}
 
 	if err := c.Validate(req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
 	}
 
 	user, err := h.userService.CreateUser(ctx, req)
@@ -98,6 +99,7 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 // @Success 200 {object} models.User
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
+// @Failure 422 {object} map[string]string
 // @Router /users/{id} [put]
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -110,6 +112,10 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 	var req models.UserUpdateRequest
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": "invalid request"})
+	}
+
+	if err := c.Validate(req); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
 	}
 
 	user, err := h.userService.UpdateUser(ctx, id, req)
@@ -144,5 +150,5 @@ func (h *UserHandler) DeleteUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	return c.NoContent(http.StatusNoContent)
+	return c.NoContent(http.StatusAccepted)
 }

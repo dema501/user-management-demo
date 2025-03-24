@@ -1,31 +1,22 @@
-.form-field {
+.user-form {
+  min-width: 150px;
+  max-width: 500px;
   width: 100%;
-  margin-bottom: 16px;
-}
 
-mat-dialog-content {
-  min-width: 350px;
-}
+  &__field {
+    width: 100%;
+    margin-top: 6px;
+    margin-bottom: 10px;
+  }
 
-.status-group {
-  margin-bottom: 16px;
-}
+  &__field--status {
+    margin-bottom: 16px;
+  }
 
-.status-label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 0.9em;
-  color: rgba(0, 0, 0, 0.6);
-}
-
-.status-radio-group {
-  display: flex;
-  flex-direction: column;
-  margin: 8px 0;
-}
-
-mat-radio-button {
-  margin: 5px 0;
+  &__status-label {
+    display: block;
+    margin-bottom: 8px;
+  }
 }
 
 mat-error {
