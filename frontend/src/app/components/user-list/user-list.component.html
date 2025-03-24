@@ -1,18 +1,25 @@
-<div class="container user-list">
+<div class="container user-list" role="region" aria-label="User Management">
   <div class="header user-list__header">
-    <h1 class="user-list__title">Users</h1>
+    <h1 class="user-list__title" id="userListTitle">Users</h1>
     <button
       class="user-list__create-button"
       mat-fab
       extended
       color="primary"
       (click)="openCreateDialog()"
+      aria-label="Create new user"
     >
-      <mat-icon>add</mat-icon> Create User
+      <mat-icon aria-hidden="true">add</mat-icon> Create User
     </button>
   </div>
 
-  <mat-table class="user-list__table" [dataSource]="dataSource" matSort>
+  <mat-table
+    class="user-list__table"
+    [dataSource]="dataSource"
+    matSort
+    aria-labelledby="userListTitle"
+    role="grid"
+  >
     <!-- ID Column -->
     <ng-container matColumnDef="id">
       <mat-header-cell
@@ -103,6 +110,7 @@
         <span
           class="user-list__status-badge"
           [ngClass]="getStatusClass(user.userStatus)"
+          [attr.aria-label]="'Status: ' + getStatus(user.userStatus)"
         >
           {{ getStatus(user.userStatus) }}
         </span>
@@ -140,17 +148,22 @@
           mat-icon-button
           color="primary"
           (click)="openEditDialog(user)"
-          [ngClass]="user.id"
+          [attr.aria-label]="'Edit user ' + user.userName"
         >
-          <mat-icon class="user-list__edit-icon">edit {{ user.id }}</mat-icon>
+          <mat-icon class="user-list__edit-icon" aria-hidden="true"
+            >edit</mat-icon
+          >
         </button>
         <button
           class="user-list__delete-button"
           mat-icon-button
           color="warn"
           (click)="deleteUser(user.id)"
+          [attr.aria-label]="'Delete user ' + user.userName"
         >
-          <mat-icon class="user-list__delete-icon">delete</mat-icon>
+          <mat-icon class="user-list__delete-icon" aria-hidden="true"
+            >delete</mat-icon
+          >
         </button>
       </mat-cell>
     </ng-container>
@@ -169,6 +182,7 @@
     class="user-list__paginator"
     [pageSizeOptions]="[5, 10, 25, 100]"
     showFirstLastButtons
+    aria-label="Select page of users"
   >
   </mat-paginator>
 </div>
