@@ -1,15 +1,26 @@
-<h2 mat-dialog-title class="user-form__title">
+<h2 mat-dialog-title class="user-form__title" id="dialogTitle">
   {{ data.mode === "create" ? "Create" : "Edit" }} User
 </h2>
 
-<mat-dialog-content class="mat-typography user-form__content">
-  <form [formGroup]="userForm" class="user-form">
-    <mat-error *ngIf="errorMessage" class="user-form__error">{{
-      errorMessage
-    }}</mat-error>
+<mat-dialog-content
+  class="mat-typography user-form__content"
+  aria-labelledby="dialogTitle"
+  role="dialog"
+  aria-modal="true"
+>
+  <form [formGroup]="userForm" class="user-form" aria-describedby="dialogTitle">
+    <mat-error
+      *ngIf="errorMessage"
+      class="user-form__error"
+      role="alert"
+      aria-live="assertive"
+      >{{ errorMessage }}</mat-error
+    >
 
     <mat-form-field appearance="outline" class="user-form__field">
-      <mat-label class="user-form__label">Username</mat-label>
+      <mat-label class="user-form__label" id="userNameLabel"
+        >Username</mat-label
+      >
       <input
         matInput
         formControlName="userName"
@@ -19,23 +30,33 @@
         [readonly]="data.mode === 'edit'"
         [attr.disabled]="data.mode === 'edit' ? true : null"
         class="user-form__input user-form__input--username"
+        aria-labelledby="userNameLabel"
+        [attr.aria-required]="true"
+        [attr.aria-invalid]="
+          userForm.get('userName')?.invalid && userForm.get('userName')?.touched
+        "
+        [attr.aria-readonly]="data.mode === 'edit'"
       />
       <mat-error
         *ngIf="userForm.get('userName')?.hasError('required')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         Username is required
       </mat-error>
       <mat-error
         *ngIf="userForm.get('userName')?.hasError('maxlength')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         Username cannot exceed 50 characters
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="user-form__field">
-      <mat-label class="user-form__label">Email</mat-label>
+      <mat-label class="user-form__label" id="emailLabel">Email</mat-label>
       <input
         matInput
         formControlName="email"
@@ -43,76 +64,119 @@
         required
         type="email"
         class="user-form__input user-form__input--email"
+        aria-labelledby="emailLabel"
+        [attr.aria-required]="true"
+        [attr.aria-invalid]="
+          userForm.get('email')?.invalid && userForm.get('email')?.touched
+        "
       />
       <mat-error
         *ngIf="userForm.get('email')?.hasError('required')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         Email is required
       </mat-error>
       <mat-error
         *ngIf="userForm.get('email')?.hasError('email')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         Please enter a valid email address
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="user-form__field">
-      <mat-label class="user-form__label">First Name</mat-label>
+      <mat-label class="user-form__label" id="firstNameLabel"
+        >First Name</mat-label
+      >
       <input
         matInput
         formControlName="firstName"
         placeholder="Enter first name"
         required
         class="user-form__input user-form__input--first-name"
+        aria-labelledby="firstNameLabel"
+        [attr.aria-required]="true"
+        [attr.aria-invalid]="
+          userForm.get('firstName')?.invalid &&
+          userForm.get('firstName')?.touched
+        "
       />
       <mat-error
         *ngIf="userForm.get('firstName')?.hasError('required')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         First name is required
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="user-form__field">
-      <mat-label class="user-form__label">Last Name</mat-label>
+      <mat-label class="user-form__label" id="lastNameLabel"
+        >Last Name</mat-label
+      >
       <input
         matInput
         formControlName="lastName"
         placeholder="Enter last name"
         required
         class="user-form__input user-form__input--last-name"
+        aria-labelledby="lastNameLabel"
+        [attr.aria-required]="true"
+        [attr.aria-invalid]="
+          userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched
+        "
       />
       <mat-error
         *ngIf="userForm.get('lastName')?.hasError('required')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         Last name is required
       </mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="user-form__field">
-      <mat-label class="user-form__label">Department</mat-label>
+      <mat-label class="user-form__label" id="departmentLabel"
+        >Department</mat-label
+      >
       <input
         matInput
         formControlName="department"
         placeholder="Enter department"
         class="user-form__input user-form__input--department"
+        aria-labelledby="departmentLabel"
       />
     </mat-form-field>
 
     <div class="user-form__field user-form__field--status">
-      <label class="user-form__status-label">User Status:</label>
+      <label id="statusLabel" class="user-form__status-label"
+        >User Status:</label
+      >
       <mat-radio-group
         formControlName="userStatus"
         required
         class="user-form__radio-group"
+        aria-labelledby="statusLabel"
+        aria-required="true"
+        [attr.aria-invalid]="
+          userForm.get('userStatus')?.invalid &&
+          userForm.get('userStatus')?.touched
+        "
       >
         <mat-radio-button
           *ngFor="let option of userStatusOptions"
           [value]="option.value"
           class="user-form__radio-button"
+          [attr.aria-label]="option.label"
+          [attr.aria-checked]="
+            userForm.get('userStatus')?.value === option.value
+          "
         >
           {{ option.label }}
         </mat-radio-button>
@@ -120,6 +184,8 @@
       <mat-error
         *ngIf="userForm.get('userStatus')?.hasError('required')"
         class="user-form__error"
+        role="alert"
+        aria-live="polite"
       >
         User status is required
       </mat-error>
@@ -127,11 +193,17 @@
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="user-form__actions">
+<mat-dialog-actions
+  align="end"
+  class="user-form__actions"
+  aria-label="Form actions"
+>
   <button
     mat-button
     mat-dialog-close
     class="user-form__button user-form__button--cancel"
+    type="button"
+    aria-label="Cancel form"
   >
     Cancel
   </button>
@@ -141,6 +213,10 @@
     [disabled]="!userForm.valid"
     (click)="onSubmit()"
     class="user-form__button user-form__button--submit"
+    type="submit"
+    [attr.aria-busy]="isSubmitting"
+    [attr.aria-label]="(data.mode === 'create' ? 'Create' : 'Save') + ' user'"
+    [attr.aria-disabled]="!userForm.valid"
   >
     {{ data.mode === "create" ? "Create" : "Save" }}
   </button>
