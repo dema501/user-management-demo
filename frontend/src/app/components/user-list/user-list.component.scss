@@ -1,52 +1,47 @@
-.container {
+.user-list {
   margin: 20px;
   overflow: auto;
-}
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-}
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+  }
 
-.form-field {
-  width: 100%;
-  margin-bottom: 16px;
-}
+  &__status-badge {
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 12px;
+    color: white;
 
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 16px;
-  font-size: 12px;
-  color: white;
-}
+    &.status-active {
+      background-color: #4caf50;
+    }
 
-.status-active {
-  background-color: #4CAF50;
-}
+    &.status-inactive {
+      background-color: #ff9800;
+    }
 
-.status-inactive {
-  background-color: #FF9800;
-}
+    &.status-terminated {
+      background-color: #f44336;
+    }
+  }
 
-.status-terminated {
-  background-color: #F44336;
-}
+  /* Fixed width for actions column */
+  .mat-column-actions {
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
 
-/* Fixed width for actions column */
-.mat-column-actions {
-  width: 100px;
-  max-width: 100px;
-  min-width: 100px;
-
-  /* Smaller icons */
-  .mat-mdc-icon-button {
-    .mat-icon {
-      font-size: 18px;
-      line-height: 18px;
-      height: 18px;
-      width: 18px;
+    /* Smaller icons */
+    .mat-mdc-icon-button {
+      .mat-icon {
+        font-size: 18px;
+        line-height: 18px;
+        height: 18px;
+        width: 18px;
+      }
     }
   }
 }
