@@ -21,7 +21,7 @@ import (
 // @version 1.0
 // @description A simple user management API
 // @host localhost:8080
-// @BasePath	/handlers/v1
+// @BasePath	/api/v1
 func main() {
 	app := fx.New(
 		fx.Provide(
