@@ -8,18 +8,18 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=user-management
     ports:
-      - "15432:5432"
+      - "25432:5432"
     volumes:
-      - ./backend/e2e/seed.sql:/docker-entrypoint-initdb.d/00_seed.sql
+      - ./seed.sql:/docker-entrypoint-initdb.d/00_seed.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
       retries: 5
 
   backend:
     build:
-      context: ./backend
+      context: ..
       dockerfile: Dockerfile
     depends_on:
       postgres:
@@ -31,15 +31,7 @@ services:
         "./userapi",
         "--dsn",
         "postgresql://postgres:postgres@postgres:5432/user-management?sslmode=disable&timeout=5s",
+        "-vvv",
       ]
     ports:
-      - "8081:8080"
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "8082:80"
-    depends_on:
-      - backend
+      - "8083:8080"
