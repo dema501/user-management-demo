@@ -17,7 +17,7 @@ import (
 
 	"user-management/internal/models"
 	"user-management/internal/repository"
-	"user-management/internal/service"
+	"user-management/internal/services"
 )
 
 // validate is a singleton validator for better performance
@@ -55,7 +55,7 @@ func initDB(dsn string) (*bun.DB, error) {
 }
 
 // commonCommandAction is a helper function to reduce code duplication
-func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(service.UserService, context.Context) error) error {
+func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(services.UserService, context.Context) error) error {
 	db, err := initDB(cmd.String("dsn"))
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(s
 	}()
 
 	userRepo := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepo)
+	userService := services.NewUserService(userRepo)
 
 	return operation(userService, ctx)
 }
@@ -77,7 +77,7 @@ func ListCommand() *cli.Command {
 		Name:  "list",
 		Usage: "List all users",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			return commonCommandAction(ctx, cmd, func(userService service.UserService, ctx context.Context) error {
+			return commonCommandAction(ctx, cmd, func(userService services.UserService, ctx context.Context) error {
 				users, err := userService.ListUsers(ctx)
 				if err != nil {
 					return fmt.Errorf("error listing users: %w", err)
@@ -116,7 +116,7 @@ func GetCommand() *cli.Command {
 				return fmt.Errorf("invalid user ID: must be greater than 0")
 			}
 
-			return commonCommandAction(ctx, cmd, func(userService service.UserService, ctx context.Context) error {
+			return commonCommandAction(ctx, cmd, func(userService services.UserService, ctx context.Context) error {
 				user, err := userService.GetUser(ctx, id)
 				if err != nil {
 					return fmt.Errorf("error getting user: %w", err)
@@ -190,7 +190,7 @@ func CreateCommand() *cli.Command {
 				return fmt.Errorf("invalid request: %w", err)
 			}
 
-			return commonCommandAction(ctx, cmd, func(userService service.UserService, ctx context.Context) error {
+			return commonCommandAction(ctx, cmd, func(userService services.UserService, ctx context.Context) error {
 				user, err := userService.CreateUser(ctx, req)
 				if err != nil {
 					return fmt.Errorf("error creating user: %w", err)
@@ -271,7 +271,7 @@ func UpdateCommand() *cli.Command {
 				return fmt.Errorf("invalid request: %w", err)
 			}
 
-			return commonCommandAction(ctx, cmd, func(userService service.UserService, ctx context.Context) error {
+			return commonCommandAction(ctx, cmd, func(userService services.UserService, ctx context.Context) error {
 				user, err := userService.UpdateUser(ctx, id, req)
 				if err != nil {
 					return fmt.Errorf("error updating user: %w", err)
@@ -302,7 +302,7 @@ func DeleteCommand() *cli.Command {
 				return fmt.Errorf("invalid user ID: must be greater than 0")
 			}
 
-			return commonCommandAction(ctx, cmd, func(userService service.UserService, ctx context.Context) error {
+			return commonCommandAction(ctx, cmd, func(userService services.UserService, ctx context.Context) error {
 				err := userService.DeleteUser(ctx, id)
 				if err != nil {
 					return fmt.Errorf("error deleting user: %w", err)

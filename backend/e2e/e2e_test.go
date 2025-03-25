@@ -47,7 +47,7 @@ func isFeatureDisabled(envVar string) bool {
 //	compose, err := tc.NewDockerComposeWith(tc.WithStackFiles("./docker-compose.yml"), identifier)
 //	require.NoError(t, err, "failed to create DockerCompose")
 //
-//	// Define service configurations
+//	// Define services configurations
 //	services := []struct {
 //		name    string
 //		waitFor wait.Strategy
@@ -70,16 +70,16 @@ func isFeatureDisabled(envVar string) bool {
 //	}
 //
 //	// Wait for services to be ready using a loop
-//	for _, service := range services {
+//	for _, services := range services {
 //		err := compose.
-//			WaitForService(service.name, service.waitFor).
+//			WaitForService(services.name, services.waitFor).
 //			Up(ctx, tc.Wait(true))
-//		require.NoError(t, err, fmt.Sprintf("failed to start %s service", service.name))
+//		require.NoError(t, err, fmt.Sprintf("failed to start %s services", services.name))
 //	}
 //}
 
 // TestUserCreationE2E  serves multiple purposes:
-// - Validate Container Build & Execution – Ensures the backend service and database container can be built and run properly in the test environment.
+// - Validate Container Build & Execution – Ensures the backend services and database container can be built and run properly in the test environment.
 // - Verify Container Communication – Confirms that services (backend API and database) can communicate as expected.
 // - End-to-End API Validation – Tests core user management functionalities, including creation, retrieval, updating, and deletion.
 // - Database Integration Check – Ensures that the data persists correctly and matches API expectations.

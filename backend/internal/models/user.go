@@ -72,7 +72,7 @@ type UserCreateRequest struct {
 	// Department the user belongs to, alphanumeric with spaces allowed
 	// maxLength: 255
 	// example: Engineering
-	Department string `json:"department" validate:"omitempty,max=255,alphanumunicode"`
+	Department string `json:"department" validate:"omitempty,max=255,alphaNumUnicodeWithSpaces"`
 }
 
 // UserUpdateRequest is the request body for updating a user
@@ -118,5 +118,5 @@ type UserUpdateRequest struct {
 	// Department the user belongs to, alphanumeric with spaces allowed
 	// maxLength: 255
 	// example: Engineering
-	Department string `json:"department" validate:"omitempty,max=255,alphanumunicode"`
+	Department string `json:"department" validate:"omitempty,max=255,alphaNumUnicodeWithSpaces"`
 }

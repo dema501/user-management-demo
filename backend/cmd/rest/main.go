@@ -2,179 +2,74 @@ package main
 
 import (
 	"context"
-	"database/sql"
-	"errors"
-	"fmt"
 	"log/slog"
-	"net/http"
 	"os"
-	"os/signal"
-	"runtime/debug"
-	"syscall"
+	"time"
 
-	"github.com/jessevdk/go-flags"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	slogecho "github.com/samber/slog-echo"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
-	"github.com/uptrace/bun/extra/bunslog"
-	"golang.org/x/time/rate"
-
-	"user-management/internal/api"
 	"user-management/internal/config"
+	"user-management/internal/database"
+	"user-management/internal/handlers"
 	"user-management/internal/repository"
-	"user-management/internal/service"
+	"user-management/internal/server"
+	"user-management/internal/services"
 	"user-management/internal/validator"
-)
 
-const (
-	appName = "user-management"
+	"go.uber.org/fx"
 )
 
 // @title User Management API
 // @version 1.0
 // @description A simple user management API
 // @host localhost:8080
-// @BasePath	/api/v1
+// @BasePath	/handlers/v1
 func main() {
-	info, _ := debug.ReadBuildInfo()
+	app := fx.New(
+		fx.Provide(
+			config.NewConfig,
+			database.NewConnection,
+		),
 
-	// plain text logging
-	slog.With("go_version", info.GoVersion).
-		With("revision", info.Main.Version).
-		With("app", appName).
-		Info("starting")
+		fx.Provide(
+			repository.NewUserRepository,
+		),
 
-	// Parse command-line options.
-	var opts config.Config
+		fx.Provide(
+			services.NewHealthcheck,
+			services.NewUserService,
 
-	p := flags.NewParser(&opts, flags.IgnoreUnknown|flags.PrintErrors|flags.PassDoubleDash|flags.HelpFlag)
-	p.SubcommandsOptional = true
+			handlers.NewHealthcheckHandler,
+			handlers.NewUserHandler,
 
-	if _, err := p.Parse(); err != nil {
-		var flagsErr flags.ErrorType
-		switch {
-		case errors.As(err, &flagsErr):
-			if errors.Is(flagsErr, flags.ErrHelp) {
-				os.Exit(0)
-			}
-			os.Exit(1)
-		default:
-			os.Exit(1)
-		}
-	}
+			validator.NewEchoValidator,
 
-	// Configure logging based on verbosity
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
-		Level: getVerboseLevel(opts.Verbose),
-	}))
-	slog.SetDefault(logger.With("app", appName))
+			server.NewServer,
+		),
 
-	// Create a context that will be canceled on SIGINT or SIGTERM
-	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+		fx.Invoke(
+			server.NewRegister,
+		),
+	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	// Initialize Bun with PostgreSQL driver
-	pgconn := pgdriver.NewConnector(
-		pgdriver.WithDSN(opts.DSN),
-		pgdriver.WithApplicationName(appName),
-		// if we have a custom schema, we can specify it here
-		pgdriver.WithConnParams(map[string]any{
-			"search_path": "public",
-		}),
-	)
-	sqldb := sql.OpenDB(pgconn)
-	// Set connection pool parameters
-	sqldb.SetMaxOpenConns(8)
-	sqldb.SetMaxIdleConns(4)
-
-	db := bun.NewDB(sqldb, pgdialect.New())
-	defer func() {
-		if err := db.Close(); err != nil {
-			logger.With("error", err).
-				Error("failed to close database connection")
-		}
-	}()
-
-	db.AddQueryHook(bunslog.NewQueryHook(
-		bunslog.WithLogger(logger.With("log_type", "bun")),
-	))
-
-	// Check if the connection is valid
-	if err := sqldb.PingContext(ctx); err != nil {
-		logger.With("error", err).
-			Error("failed to connect to database")
+	if err := app.Start(ctx); err != nil {
+		slog.With("error", err).
+			Error("failed to start application")
 		os.Exit(1)
 	}
 
-	// Initialize repository, service, and API handlers
-	userRepo := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepo)
-	userHandler := api.NewUserHandler(userService)
-
-	// Create Echo instance
-	e := echo.New()
-
-	// Register validator
-	e.Validator = validator.New()
-
-	e.Use(slogecho.New(logger))
-	e.Use(middleware.Recover())
-	e.Use(middleware.CORS())
-
-	e.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pong")
-	})
-
-	v1 := e.Group("/api/v1")
-	{
-		// limit the application to 100 requests/sec TBD
-		v1.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(opts.RateLimit))))
-
-		// Routes
-		v1.GET("/users", userHandler.ListUsers)
-		v1.POST("/users", userHandler.CreateUser)
-		v1.GET("/users/:id", userHandler.GetUser)
-		v1.PUT("/users/:id", userHandler.UpdateUser)
-		v1.DELETE("/users/:id", userHandler.DeleteUser)
-	}
-
-	// Swagger documentation
-	e.GET("/swagger/*", api.SwaggerHandler())
-
-	// Start server
-	go func() {
-		if err := e.Start(fmt.Sprintf(":%d", opts.Port)); err != nil && err != http.ErrServerClosed {
-			logger.Error("shutting down the server", slog.Any("error", err))
-		}
-	}()
-
 	// Wait for interrupt signal
-	<-ctx.Done()
+	<-app.Done()
 
-	// Prevent the HTTP server from establishing new keep-alive connections.
-	e.Server.SetKeepAlivesEnabled(false)
+	stopCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
 
-	// Wait for the server to stop gracefully.
-	if err := e.Shutdown(ctx); err != nil {
-		logger.Error("error during server shutdown", slog.Any("error", err))
+	if err := app.Stop(stopCtx); err != nil {
+		slog.With("error", err).
+			Error("failed to stop application")
+		os.Exit(1)
 	}
 
-	logger.Info("Server shut down successfully")
-}
-
-// getVerboseLevel returns the slog level based on the number of verbose flags.
-func getVerboseLevel(verbose []bool) slog.Level {
-	switch len(verbose) {
-	case 0:
-		return slog.LevelError
-	case 1:
-		return slog.LevelWarn
-	case 2:
-		return slog.LevelInfo
-	default:
-		return slog.LevelDebug
-	}
+	slog.Info("application stopped")
 }
