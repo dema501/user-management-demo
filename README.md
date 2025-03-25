@@ -2,6 +2,8 @@
 
 A complete full-stack application for user management with CRUD functionality, providing both a RESTful API backend and a responsive Angular frontend. This project was built for learning purposes to gain hands-on experience with modern frameworks and technologies.
 
+![Screenshot](screenshot.png)
+
 ## Project Overview
 
 This project implements a user management system consisting of two main components:
