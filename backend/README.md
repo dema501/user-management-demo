@@ -189,6 +189,28 @@ To regenerate the Swagger documentation after API changes:
 make swagger
 ```
 
+### Generate TypeScript Type Definitions from Go Source Code
+
+install `tygo` generator:
+
+```bash
+go install github.com/gzuidhof/tygo@latest
+```
+
+
+Generate the typescript typings:
+
+```bash
+tygo generate
+```
+or
+
+```bash
+make generate-types
+```
+
+it will generate the typings in `../frontend/src/app/models/user.model.tmp.ts`. Rename the file by removing '.tmp' extension and validate the generated types before committing changes to version control.
+
 ## Project Highlights
 
 - **Clean Architecture**: Following MVC pattern with clear separation of concerns

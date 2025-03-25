@@ -1,5 +1,5 @@
-// Package api provides HTTP handlers for user-related operations.
-package api
+// Package handlers provides HTTP handlers for user-related operations.
+package handlers
 
 import (
 	"net/http"
@@ -8,14 +8,14 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"user-management/internal/models"
-	"user-management/internal/service"
+	"user-management/internal/services"
 )
 
 type UserHandler struct {
-	userService service.UserService
+	userService services.UserService
 }
 
-func NewUserHandler(userService service.UserService) *UserHandler {
+func NewUserHandler(userService services.UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }
 

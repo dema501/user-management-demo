@@ -1,4 +1,4 @@
-package api_test
+package handlers_test
 
 import (
 	"bytes"
@@ -17,14 +17,14 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
-	"user-management/internal/api"
+	"user-management/internal/handlers"
 	"user-management/internal/models"
 	"user-management/internal/repository"
-	"user-management/internal/service"
+	"user-management/internal/services"
 	"user-management/internal/validator"
 )
 
-func TestApi(t *testing.T) {
+func TestHandlers(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Api Suite")
 }
@@ -43,8 +43,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	userRepo := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepo)
-	userHandler := api.NewUserHandler(userService)
+	userService := services.NewUserService(userRepo)
+	userHandler := handlers.NewUserHandler(userService)
 
 	srv = echo.New()
 	srv.GET("/users", userHandler.ListUsers)
@@ -53,7 +53,7 @@ var _ = BeforeSuite(func() {
 	srv.PUT("/users/:id", userHandler.UpdateUser)
 	srv.DELETE("/users/:id", userHandler.DeleteUser)
 
-	srv.Validator = validator.New()
+	srv.Validator = validator.NewEchoValidator()
 })
 
 var _ = Describe("User API", func() {
@@ -109,7 +109,7 @@ var _ = Describe("User API", func() {
 			LastName:   "Doe",
 			Email:      "john@doe.com",
 			UserStatus: models.UserStatusTerminated,
-			Department: "Sales",
+			Department: "IT & Co",
 		}
 		jsonBody, err := json.Marshal(updateData)
 		Expect(err).NotTo(HaveOccurred())
@@ -128,7 +128,7 @@ var _ = Describe("User API", func() {
 			LastName:   "Doe",
 			Email:      "invalid-email", // Invalid email format
 			UserStatus: models.UserStatusActive,
-			Department: "Sales",
+			Department: "Sales Dep",
 		}
 		jsonBody, err := json.Marshal(updateData)
 		Expect(err).NotTo(HaveOccurred())

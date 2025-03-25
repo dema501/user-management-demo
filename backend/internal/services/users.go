@@ -1,5 +1,5 @@
-// Package service provides user-related business logic operations.
-package service
+// Package services provides user-related business logic operations.
+package services
 
 import (
 	"context"

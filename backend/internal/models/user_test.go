@@ -7,10 +7,9 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-)
 
-// Global validator for testing
-var validate = validator.New()
+	vld "user-management/internal/validator"
+)
 
 func TestUserModel(t *testing.T) {
 	t.Parallel()
@@ -54,6 +53,9 @@ func TestUserModel(t *testing.T) {
 
 func TestUserCreateRequestValidation(t *testing.T) {
 	t.Parallel()
+
+	validate, err := vld.NewValidator()
+	require.NoError(t, err)
 
 	// Set up a matrix of test cases for UserCreateRequest validation
 	testCases := []struct {
@@ -227,7 +229,7 @@ func TestUserCreateRequestValidation(t *testing.T) {
 			},
 			expectedError: true,
 			errorField:    "Department",
-			errorTag:      "alphanumunicode",
+			errorTag:      "alphaNumUnicodeWithSpaces",
 		},
 		{
 			name: "Optional Department Can Be Empty",
@@ -277,6 +279,9 @@ func TestUserCreateRequestValidation(t *testing.T) {
 
 func TestUserUpdateRequestValidation(t *testing.T) {
 	t.Parallel()
+
+	validate, err := vld.NewValidator()
+	require.NoError(t, err)
 
 	// Set up a matrix of test cases for UserUpdateRequest validation
 	testCases := []struct {
@@ -464,7 +469,7 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 			},
 			expectedError: true,
 			errorField:    "Department",
-			errorTag:      "alphanumunicode",
+			errorTag:      "alphaNumUnicodeWithSpaces",
 		},
 		{
 			name: "Optional Department Can Be Empty",

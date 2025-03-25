@@ -34,6 +34,10 @@ swagger:
 	@echo "Generating Swagger documentation..."
 	@swag init --dir $(CURDIR) --generalInfo $(API_MAIN) --output $(CURDIR)/docs/swagger --parseInternal --parseDependency -q
 
+generate-types:
+	@echo "Generating TypeScript definitions..."
+	@tygo generate
+
 # Start development environment with hot reload
 dev:
 	@echo "Starting development server with air..."
