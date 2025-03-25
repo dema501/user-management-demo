@@ -16,21 +16,65 @@ const (
 )
 
 type User struct {
-	bun.BaseModel `bun:"table:users,alias:u"`
+	bun.BaseModel `bun:"table:users,alias:u" tstype:"-"`
 
-	UserID     int64      `bun:"user_id,pk,autoincrement" json:"id"`
-	UserName   string     `bun:"user_name,notnull" json:"userName"`
-	FirstName  string     `bun:"first_name" json:"firstName"`
-	LastName   string     `bun:"last_name" json:"lastName"`
-	Email      string     `bun:"email,unique,notnull" json:"email"`
+	UserID int64 `bun:"user_id,pk,autoincrement" json:"id"`
+
+	// The username for the user, must be provided, minimum 4 alphanumeric characters
+	// required: true
+	// minLength: 4
+	// maxLength: 255
+	// pattern: ^[a-zA-Z0-9]+$
+	// example: johndoe
+	UserName string `bun:"user_name,notnull" json:"userName"`
+
+	// The first name of the user, must be provided, minimum 1 character, can have spaces
+	// required: true
+	// minLength: 1
+	// maxLength: 255
+	// pattern: ^[a-zA-Z0-9]+$
+	// example: John
+	FirstName string `bun:"first_name" json:"firstName"`
+
+	// The last name of the user, must be provided, minimum 1 character, can have spaces
+	// required: true
+	// minLength: 1
+	// maxLength: 255
+	// pattern: ^[a-zA-Z0-9]+$
+	// example: Doe
+	LastName string `bun:"last_name" json:"lastName"`
+
+	// Email address of the user, must be a valid email format
+	// required: true
+	// maxLength: 255
+	// format: email
+	// example: john.doe@example.com
+	Email string `bun:"email,unique,notnull" json:"email"`
+
+	// Status of the user (A=Active, I=Inactive, T=Terminated)
+	// required: true
+	// enum: A,I,T
+	// example: A
 	UserStatus UserStatus `bun:"user_status,notnull,type:varchar(1)" json:"userStatus" check:"user_status IN ('A', 'I', 'T')"`
-	Department string     `bun:"department" json:"department"`
-	CreatedAt  time.Time  `bun:"created_at,notnull,default:current_timestamp" json:"createdAt"`
-	UpdatedAt  time.Time  `bun:"updated_at,notnull,default:current_timestamp" json:"updatedAt"`
+
+	// The last name of the user, must be provided, minimum 1 character, can have spaces
+	// required: true
+	// minLength: 1
+	// maxLength: 255
+	// pattern: ^[a-zA-Z0-9]+$
+	// example: Doe
+	Department string `bun:"department" json:"department"`
+
+	// Created at date and time
+	//
+	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp" json:"createdAt"`
+	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp" json:"updatedAt"`
 }
 
 // UserCreateRequest is the request body for creating a user
 // swagger:model UserCreateRequest
+//
+//tygo:emit export type UserStatus = "A" | "I" | "T"
 type UserCreateRequest struct {
 	// The username for the user, must be provided, minimum 4 alphanumeric characters
 	// required: true
@@ -67,7 +111,7 @@ type UserCreateRequest struct {
 	// required: true
 	// enum: A,I,T
 	// example: A
-	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T"`
+	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T" tstype:"UserStatus"`
 
 	// Department the user belongs to, alphanumeric with spaces allowed
 	// maxLength: 255
@@ -113,7 +157,7 @@ type UserUpdateRequest struct {
 	// required: true
 	// enum: A,I,T
 	// example: A
-	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T"`
+	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T" tstype:"UserStatus"`
 
 	// Department the user belongs to, alphanumeric with spaces allowed
 	// maxLength: 255

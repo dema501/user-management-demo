@@ -1,0 +1,6 @@
+packages:
+  - path: "user-management/internal/models"
+    output_path: "../frontend/src/app/models/user.model.tmp.ts"
+    type_mappings:
+      time.Time: "string /* RFC3339 */"
+    flavor: "yaml"
