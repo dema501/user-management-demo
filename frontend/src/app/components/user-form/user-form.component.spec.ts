@@ -14,11 +14,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { UserFormComponent } from "./user-form.component";
 import { UserService } from "../../services/user.service";
 import { of, throwError } from "rxjs";
-import {
-  User,
-  UserCreateRequest,
-  UserUpdateRequest,
-} from "../../models/user.model";
+import { User } from "../../models/user.model";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";

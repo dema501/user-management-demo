@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-prettier/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": true,
+    "custom-property-pattern": "^[a-z][a-zA-Z0-9]+$",
+    "selector-class-pattern": "^[a-z][a-zA-Z0-9\\-]+$",
+    "scss/dollar-variable-pattern": "^[_a-z][a-z0-9-]+$",
+    "color-hex-length": "short",
+    "declaration-block-no-redundant-longhand-properties": true,
+    "shorthand-property-no-redundant-values": true
+  }
+}
