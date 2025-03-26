@@ -62,8 +62,10 @@ export class UserListComponent implements OnInit {
       next: (users) => {
         this.dataSource.data = users;
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.snackBar.open("Failed to load users", "Close", { duration: 3000 });
+
+        // eslint-disable-next-line no-console
         console.error(error);
       },
     });
@@ -132,10 +134,12 @@ export class UserListComponent implements OnInit {
           });
           this.loadUsers();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.snackBar.open("Failed to delete user", "Close", {
             duration: 3000,
           });
+
+          // eslint-disable-next-line no-console
           console.error(error);
         },
       });

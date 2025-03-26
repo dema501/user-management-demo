@@ -4,7 +4,11 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule, MatDialog } from "@angular/material/dialog";
+import {
+  MatDialogModule,
+  MatDialog,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { NgClass } from "@angular/common";
 import { By } from "@angular/platform-browser";
@@ -17,7 +21,7 @@ import { MatSortHarness } from "@angular/material/sort/testing";
 
 import { UserListComponent } from "./user-list.component";
 import { UserService } from "../../services/user.service";
-import { of, throwError } from "rxjs";
+import { of } from "rxjs";
 import { User } from "../../models/user.model";
 import { UserFormComponent } from "../user-form/user-form.component";
 
@@ -75,7 +79,9 @@ describe("UserListComponent", () => {
 
     // Mock initial responses
     userServiceSpy.getUsers.and.returnValue(of(mockUsers));
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(true) } as any);
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of(true),
+    } as unknown as MatDialogRef<unknown>);
 
     await TestBed.configureTestingModule({
       imports: [
@@ -367,7 +373,9 @@ describe("UserListComponent", () => {
 
   it("should not reload users if dialog is closed with negative result", () => {
     // Mock dialog to return false (cancelled)
-    dialogSpy.open.and.returnValue({ afterClosed: () => of(false) } as any);
+    dialogSpy.open.and.returnValue({
+      afterClosed: () => of(false),
+    } as unknown as MatDialogRef<unknown>);
 
     // Reset the spy counter
     userServiceSpy.getUsers.calls.reset();

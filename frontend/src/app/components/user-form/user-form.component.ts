@@ -1,4 +1,3 @@
-// frontend/src/app/components/user-form/user-form.component.ts
 import { Component, Inject, OnInit } from "@angular/core";
 import { NgIf, NgFor } from "@angular/common";
 import {
@@ -118,7 +117,7 @@ export class UserFormComponent implements OnInit {
           });
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.handleError(error);
         },
       });
@@ -131,22 +130,23 @@ export class UserFormComponent implements OnInit {
           });
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.handleError(error);
         },
       });
     }
   }
 
-  handleError(error: any): void {
+  handleError(error: unknown): void {
     this.isSubmitting = false;
-    if (error.error && error.error.error) {
-      this.errorMessage = error.error.error;
-    } else {
-      this.errorMessage = "An error occurred. Please try again.";
-    }
-    // log error to console
-    // TBD report error to analytics service
+
+    const defaultErrorMessage = "An error occurred. Please try again.";
+    this.errorMessage =
+      error instanceof Error && error.message?.trim()
+        ? error.message
+        : defaultErrorMessage;
+
+    // eslint-disable-next-line no-console
     console.error(error);
   }
 

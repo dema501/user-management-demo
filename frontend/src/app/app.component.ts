@@ -5,7 +5,6 @@ import { MatToolbarModule } from "@angular/material/toolbar";
   selector: "app-root",
   imports: [RouterOutlet, MatToolbarModule],
   templateUrl: "./app.component.html",
-  styleUrl: "./app.component.scss",
   host: { class: "app-root" },
 })
 export class AppComponent {
