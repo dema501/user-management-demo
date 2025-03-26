@@ -45,7 +45,7 @@ func main() {
 				Config: cli.BoolConfig{
 					Count: &verbosityLevel,
 				},
-				Action: func(ctx context.Context, cmd *cli.Command, _ bool) error {
+				Action: func(_ context.Context, _ *cli.Command, _ bool) error {
 					logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 						Level: getVerboseLevel(verbosityLevel),
 					}))

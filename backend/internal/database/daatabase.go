@@ -35,7 +35,7 @@ func NewConnection(lc fx.Lifecycle, cfg *config.Config) *bun.DB {
 
 	db := bun.NewDB(sqldb, pgdialect.New())
 
-	if slog.Default().Enabled(nil, slog.LevelDebug) {
+	if slog.Default().Enabled(context.TODO(), slog.LevelDebug) {
 		db.AddQueryHook(bunslog.NewQueryHook(
 			bunslog.WithLogger(slog.Default()),
 		))
@@ -46,7 +46,7 @@ func NewConnection(lc fx.Lifecycle, cfg *config.Config) *bun.DB {
 			slog.Info("Connecting with database")
 			return db.PingContext(ctx)
 		},
-		OnStop: func(ctx context.Context) error {
+		OnStop: func(_ context.Context) error {
 			slog.Info("Disconnection from database")
 			return db.Close()
 		},

@@ -274,7 +274,6 @@ func TestUserCreateRequestValidation(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc // Capture range variable for parallel execution
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
@@ -540,7 +539,6 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		tc := tc // Capture range variable for parallel execution
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 

@@ -9,6 +9,7 @@ import (
 	"user-management/internal/models"
 )
 
+// UserRepository provides user-related data access operations.
 type UserRepository interface {
 	List(ctx context.Context) ([]models.User, error)
 	GetByID(ctx context.Context, id int64) (*models.User, error)
@@ -23,6 +24,7 @@ type userRepository struct {
 	db *bun.DB
 }
 
+// NewUserRepository creates a new user repository.
 func NewUserRepository(db *bun.DB) UserRepository {
 	return &userRepository{db: db}
 }

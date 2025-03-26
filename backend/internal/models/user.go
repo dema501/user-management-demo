@@ -10,8 +10,11 @@ import (
 type UserStatus string
 
 const (
-	UserStatusActive     UserStatus = "A"
-	UserStatusInactive   UserStatus = "I"
+	// UserStatusActive represents an active user
+	UserStatusActive UserStatus = "A"
+	// UserStatusInactive represents an inactive user
+	UserStatusInactive UserStatus = "I"
+	// UserStatusTerminated represents a terminated user
 	UserStatusTerminated UserStatus = "T"
 )
 
@@ -54,7 +57,7 @@ type UserCommon struct {
 	// required: true
 	// enum: A,I,T
 	// example: A
-	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T" tstype:"UserStatusFlag" bun:"user_status,notnull,type:varchar(1)" check:"user_status IN ('A', 'I', 'T')" tstype:"UserStatusFlag"`
+	UserStatus UserStatus `json:"userStatus" validate:"required,oneof=A I T" tstype:"UserStatusFlag" bun:"user_status,notnull,type:varchar(1)" check:"user_status IN ('A', 'I', 'T')"`
 
 	// Department the user belongs to, alphanumeric with spaces allowed
 	// maxLength: 255
@@ -62,6 +65,7 @@ type UserCommon struct {
 	Department string `json:"department" validate:"omitempty,max=255,alphaNumUnicodeWithSpaces" bun:"department"`
 }
 
+// User represents a user in the system
 type User struct {
 	bun.BaseModel `bun:"table:users,alias:u" tstype:"-"`
 

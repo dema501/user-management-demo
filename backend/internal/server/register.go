@@ -19,9 +19,9 @@ func NewRegister(e *echo.Echo, cfg *config.Config, userHandler *handlers.UserHan
 	e.GET("/status", hc.GetAPIStatus)
 
 	v1 := e.Group("/api/v1")
-	{
+	{ //nolint:gocritic,unused
 		// limit the application to 100 requests/sec TBD
-		v1.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(cfg.Http.RateLimit))))
+		v1.Use(middleware.RateLimiter(middleware.NewRateLimiterMemoryStore(rate.Limit(cfg.HTTP.RateLimit))))
 
 		// Routes
 		v1.GET("/users", userHandler.ListUsers)

@@ -10,6 +10,7 @@ import (
 	"user-management/internal/repository"
 )
 
+// UserService provides user-related business logic operations.
 type UserService interface {
 	ListUsers(ctx context.Context) ([]models.User, error)
 	GetUser(ctx context.Context, id int64) (*models.User, error)
@@ -22,6 +23,7 @@ type userService struct {
 	repo repository.UserRepository
 }
 
+// NewUserService creates a new user service.
 func NewUserService(repo repository.UserRepository) UserService {
 	return &userService{repo: repo}
 }

@@ -11,10 +11,12 @@ import (
 	"user-management/internal/services"
 )
 
+// UserHandler represents a handler for user-related operations.
 type UserHandler struct {
 	userService services.UserService
 }
 
+// NewUserHandler creates a new UserHandler.
 func NewUserHandler(userService services.UserService) *UserHandler {
 	return &UserHandler{userService: userService}
 }

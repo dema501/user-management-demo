@@ -29,7 +29,7 @@ func NewServer(lc fx.Lifecycle, cfg *config.Config, h services.Healthcheck, v ec
 			h.SetOnlineSince(time.Now())
 
 			go func() {
-				err := e.Start(fmt.Sprintf(":%d", cfg.Http.Port))
+				err := e.Start(fmt.Sprintf(":%d", cfg.HTTP.Port))
 				if err != nil {
 					slog.With("error", err).
 						Error("failed to start server")

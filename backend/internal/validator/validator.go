@@ -17,6 +17,7 @@ type wrapper struct {
 	validator *validator.Validate
 }
 
+// NewValidator creates a new validator with custom validation
 func NewValidator() (*validator.Validate, error) {
 	v := validator.New()
 
@@ -27,6 +28,7 @@ func NewValidator() (*validator.Validate, error) {
 	return v, nil
 }
 
+// NewEchoValidator creates a new validator for echo framework.
 func NewEchoValidator() echo.Validator {
 	v, err := NewValidator()
 	if err != nil {
@@ -47,14 +49,7 @@ func (v *wrapper) Validate(i any) error {
 
 // alphaUnicodeNumericRegex returns a compiled regex
 func alphaUnicodeNumericRegex() *regexp.Regexp {
-	regex, err := regexp.Compile(alphaUnicodeNumericRegexString)
-	if err != nil {
-		slog.With("error", err).
-			Error("failed to compile regex")
-
-		os.Exit(1)
-	}
-	return regex
+	return regexp.MustCompile(alphaUnicodeNumericRegexString)
 }
 
 // IsAlphanumUnicodeWithSpaces is the validation function for validating if the current field's value

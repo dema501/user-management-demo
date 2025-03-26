@@ -15,8 +15,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	//tc "github.com/testcontainers/testcontainers-go/modules/compose"
-	//"github.com/testcontainers/testcontainers-go/wait"
+	// tc "github.com/testcontainers/testcontainers-go/modules/compose"
+	// "github.com/testcontainers/testcontainers-go/wait"
 
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
@@ -40,7 +40,7 @@ func isFeatureDisabled(envVar string) bool {
 }
 
 //
-//func setupServices(t *testing.T, ctx context.Context) {
+// func setupServices(t *testing.T, ctx context.Context) {
 //	t.Helper()
 //
 //	identifier := tc.StackIdentifier("user-management_test")
@@ -76,7 +76,7 @@ func isFeatureDisabled(envVar string) bool {
 //			Up(ctx, tc.Wait(true))
 //		require.NoError(t, err, fmt.Sprintf("failed to start %s services", services.name))
 //	}
-//}
+// }
 
 // TestUserCreationE2E  serves multiple purposes:
 // - Validate Container Build & Execution – Ensures the backend services and database container can be built and run properly in the test environment.
@@ -95,9 +95,9 @@ func TestUserCreationE2E(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	t.Cleanup(cancel)
 
-	//if isFeatureEnabled("E2E_SERVICES_SETUP") {
-	//	setupServices(t, ctx)
-	//}
+	// if isFeatureEnabled("E2E_SERVICES_SETUP") {
+	//	 setupServices(t, ctx)
+	// }
 
 	pgConn := pgdriver.NewConnector(
 		pgdriver.WithDSN(dsn),
@@ -282,7 +282,7 @@ func TestUserCreationE2E(t *testing.T) {
 		defer resp.Body.Close()
 
 		// Check response status
-		//assert.Equal(t, http.StatusOK, resp.StatusCode)
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 		// Parse response body
 		body, err := io.ReadAll(resp.Body)
@@ -329,7 +329,7 @@ func TestUserCreationE2E(t *testing.T) {
 		req, err := http.NewRequest(
 			http.MethodDelete,
 			fmt.Sprintf("%s/users/%d", apiBaseURL, user.UserID),
-			nil,
+			http.NoBody,
 		)
 		require.NoError(t, err)
 
