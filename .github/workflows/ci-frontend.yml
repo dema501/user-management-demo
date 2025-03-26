@@ -1,6 +1,7 @@
 name: frontend
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -34,7 +35,7 @@ jobs:
         uses: browser-actions/setup-firefox@latest
 
       - name: Install dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable --production=false
         working-directory: frontend
 
       - name: Run linting
