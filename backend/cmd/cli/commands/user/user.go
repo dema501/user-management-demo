@@ -76,6 +76,7 @@ func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(s
 	return operation(userService, ctx)
 }
 
+// ListCommand returns a CLI command for listing all users
 func ListCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "list",
@@ -102,6 +103,7 @@ func ListCommand() *cli.Command {
 	}
 }
 
+// GetCommand returns a CLI command for getting a user by ID
 func GetCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "get",
@@ -138,6 +140,7 @@ func GetCommand() *cli.Command {
 	}
 }
 
+// CreateCommand returns a CLI command for creating a new user
 func CreateCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "create",
@@ -210,6 +213,7 @@ func CreateCommand() *cli.Command {
 	}
 }
 
+// UpdateCommand returns a CLI command for updating an existing user
 func UpdateCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "update",
@@ -292,6 +296,7 @@ func UpdateCommand() *cli.Command {
 	}
 }
 
+// DeleteCommand returns a CLI command for deleting a user
 func DeleteCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "delete",

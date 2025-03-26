@@ -1,17 +1,19 @@
 import { Component, OnInit, ViewChild } from "@angular/core";
 import { NgClass } from "@angular/common";
 import { MatTableModule, MatTableDataSource } from "@angular/material/table";
+import { Subscription } from "rxjs";
 import { MatIconModule } from "@angular/material/icon";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatSort } from "@angular/material/sort";
 import { MatDialog } from "@angular/material/dialog";
-import { User } from "../../models/user.model";
-import { UserService } from "../../services/user.service";
-import { UserFormComponent } from "../user-form/user-form.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatButtonModule } from "@angular/material/button";
 import { MatSortModule } from "@angular/material/sort";
+
+import { User } from "../../models/user.model";
+import { UserService } from "../../services/user.service";
+import { UserFormComponent } from "../user-form/user-form.component";
 
 @Component({
   selector: "app-user-list",
@@ -27,6 +29,8 @@ import { MatSortModule } from "@angular/material/sort";
   ],
 })
 export class UserListComponent implements OnInit {
+  private subscriptions: Subscription[] = [];
+
   displayedColumns: string[] = [
     "id",
     "userName",
@@ -57,8 +61,12 @@ export class UserListComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  }
+
   loadUsers(): void {
-    this.userService.getUsers().subscribe({
+    const sub = this.userService.getUsers().subscribe({
       next: (users) => {
         this.dataSource.data = users;
       },
@@ -69,6 +77,7 @@ export class UserListComponent implements OnInit {
         console.error(error);
       },
     });
+    this.subscriptions.push(sub);
   }
 
   getStatusClass(status: string): string {
@@ -105,11 +114,12 @@ export class UserListComponent implements OnInit {
       data: { mode: "create" },
     });
 
-    dialogRef.afterClosed().subscribe((result: User) => {
+    const sub = dialogRef.afterClosed().subscribe((result: User) => {
       if (result) {
         this.loadUsers();
       }
     });
+    this.subscriptions.push(sub);
   }
 
   openEditDialog(user: User): void {
@@ -118,16 +128,17 @@ export class UserListComponent implements OnInit {
       data: { mode: "edit", user },
     });
 
-    dialogRef.afterClosed().subscribe((result: User) => {
+    const sub = dialogRef.afterClosed().subscribe((result: User) => {
       if (result) {
         this.loadUsers();
       }
     });
+    this.subscriptions.push(sub);
   }
 
   deleteUser(id: number): void {
     if (confirm("Are you sure you want to delete this user?")) {
-      this.userService.deleteUser(id).subscribe({
+      const sub = this.userService.deleteUser(id).subscribe({
         next: () => {
           this.snackBar.open("User deleted successfully", "Close", {
             duration: 3000,
@@ -143,6 +154,7 @@ export class UserListComponent implements OnInit {
           console.error(error);
         },
       });
+      this.subscriptions.push(sub);
     }
   }
 }

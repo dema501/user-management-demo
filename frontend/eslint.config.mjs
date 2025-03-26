@@ -1,11 +1,13 @@
 import eslint from "@eslint/js";
+import { defineConfig } from "eslint/config";
+
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import prettier from "eslint-plugin-prettier";
 import prettierConfig from "eslint-config-prettier";
 import jasmine from "eslint-plugin-jasmine";
 
-export default [
+export default defineConfig([
   eslint.configs.recommended,
   {
     files: ["src/**/*.ts"],
@@ -53,4 +55,4 @@ export default [
     },
   },
   prettierConfig,
-];
+]);

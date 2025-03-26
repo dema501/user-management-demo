@@ -9,11 +9,13 @@ import (
 )
 
 const (
+	// AppName is the name of the application.
 	AppName = "user-management"
 )
 
+// Config represents the configuration of the application.
 type Config struct {
-	Http struct {
+	HTTP struct {
 		Port      int `long:"port" env:"PORT" description:"Port number for the server" default:"8080"`
 		RateLimit int `long:"rate-limit" env:"RATE_LIMIT" description:"Rate limit for the server" default:"100"`
 	} `group:"http" name:"http" env-namespace:"HTTP" description:"Server configuration"`
@@ -27,6 +29,7 @@ type Config struct {
 	} `group:"db" name:"db" env-namespace:"DB" description:"Database configuration"`
 }
 
+// NewConfig creates a new Config.
 func NewConfig() *Config {
 	var cfg Config
 

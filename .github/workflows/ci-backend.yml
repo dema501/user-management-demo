@@ -1,0 +1,49 @@
+name: backend
+
+on:
+  push:
+    branches:
+    tags:
+    paths:
+      - ".github/workflows/ci-backend.yml"
+      - "backend/**"
+      - "!backend/scripts/**"
+      - "!**.md"
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - ".github/workflows/ci-backend.yml"
+      - "backend/**"
+      - "!backend/docs/**"
+      - "!**.md"
+
+jobs:
+  test:
+    name: Lint & Test & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: backend
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.0
+          working-directory: backend
+          args: --timeout=5m
+
+      - name: Run tests
+        working-directory: backend
+        run: go test ./... -v -race
+
+      - name: build backend
+        run: |
+          go build  -race -trimpath -ldflags="-w -s" ./cmd/rest/main.go
+        working-directory: backend

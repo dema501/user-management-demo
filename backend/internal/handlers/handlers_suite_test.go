@@ -14,8 +14,11 @@ import (
 	"github.com/uptrace/bun/dialect/sqlitedialect"
 	"github.com/uptrace/bun/driver/sqliteshim"
 
+	//revive:disable:dot-imports
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+
+	//revive:enable:dot-imports
 
 	"user-management/internal/handlers"
 	"user-management/internal/models"
@@ -37,7 +40,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 
 	db := bun.NewDB(sqldb, sqlitedialect.New())
-	//db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+	// for debugging
+	// db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
 
 	err = db.ResetModel(context.TODO(), (*models.User)(nil))
 	Expect(err).NotTo(HaveOccurred())
@@ -100,7 +104,7 @@ var _ = Describe("User API", func() {
 	})
 
 	It("should retrieve an existing user", func() {
-		req := httptest.NewRequest(http.MethodGet, "/users/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/users/1", http.NoBody)
 		resp := httptest.NewRecorder()
 		srv.ServeHTTP(resp, req)
 		Expect(resp.Code).To(Equal(http.StatusOK))
@@ -148,14 +152,14 @@ var _ = Describe("User API", func() {
 	})
 
 	It("should delete an existing user", func() {
-		req := httptest.NewRequest(http.MethodDelete, "/users/1", nil)
+		req := httptest.NewRequest(http.MethodDelete, "/users/1", http.NoBody)
 		resp := httptest.NewRecorder()
 		srv.ServeHTTP(resp, req)
 		Expect(resp.Code).To(Equal(http.StatusAccepted))
 	})
 
 	It("should return error for non-existent user", func() {
-		req := httptest.NewRequest(http.MethodGet, "/users/999", nil)
+		req := httptest.NewRequest(http.MethodGet, "/users/999", http.NoBody)
 		resp := httptest.NewRecorder()
 		srv.ServeHTTP(resp, req)
 		Expect(resp.Code).To(Equal(http.StatusNotFound))

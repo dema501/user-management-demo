@@ -50,6 +50,7 @@ func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(*
 	return operation(migrator, ctx)
 }
 
+// InitCommand creates migration tables.
 func InitCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "init",
@@ -62,6 +63,7 @@ func InitCommand() *cli.Command {
 	}
 }
 
+// MigrateCommand migrates the database.
 func MigrateCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "migrate",
@@ -90,6 +92,7 @@ func MigrateCommand() *cli.Command {
 	}
 }
 
+// RollbackCommand rolls back the last migration group.
 func RollbackCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "rollback",
@@ -127,6 +130,7 @@ func RollbackCommand() *cli.Command {
 	}
 }
 
+// LockCommand locks migrations.
 func LockCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "lock",
@@ -139,6 +143,7 @@ func LockCommand() *cli.Command {
 	}
 }
 
+// UnlockCommand unlocks migrations.
 func UnlockCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "unlock",
@@ -151,6 +156,7 @@ func UnlockCommand() *cli.Command {
 	}
 }
 
+// CreateGoCommand creates a Go migration.
 func CreateGoCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "create_go",
@@ -174,6 +180,7 @@ func CreateGoCommand() *cli.Command {
 	}
 }
 
+// CreateSQLCommand creates a SQL migration.
 func CreateSQLCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "create_sql",
@@ -199,6 +206,7 @@ func CreateSQLCommand() *cli.Command {
 	}
 }
 
+// StatusCommand shows migration status.
 func StatusCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "status",
@@ -221,6 +229,7 @@ func StatusCommand() *cli.Command {
 	}
 }
 
+// TruncateUserTableCommand truncates the user table.
 func TruncateUserTableCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "truncate_user_table",
