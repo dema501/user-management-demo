@@ -1,0 +1,54 @@
+name: frontend
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/ci-frontend.yml"
+      - "frontend/src/**"
+      - "!**.md"
+  pull_request:
+    types: [opened, reopened]
+    paths:
+      - ".github/workflows/ci-frontend.yml"
+      - "frontend/src/**"
+      - "!**.md"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+          cache-dependency-path: "**/yarn.lock"
+
+      - name: Setup Firefox
+        uses: browser-actions/setup-firefox@latest
+
+      - name: Install dependencies
+        run: yarn install --immutable
+        working-directory: frontend
+
+      - name: Run linting
+        run: yarn lint
+        working-directory: frontend
+
+      - name: Check Licenses
+        run: yarn check:license
+        working-directory: frontend
+
+      - name: Run tests
+        run: yarn test:ci
+        working-directory: frontend
+
+      - name: build frontend
+        run: yarn build
+        working-directory: backend
