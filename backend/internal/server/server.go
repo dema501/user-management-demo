@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	slogecho "github.com/samber/slog-echo"
 	"go.uber.org/fx"
 
@@ -20,6 +21,8 @@ func NewServer(lc fx.Lifecycle, cfg *config.Config, h services.Healthcheck, v ec
 
 	e.Validator = v
 	e.Use(slogecho.New(slog.Default()))
+	e.Use(middleware.Recover())
+	e.Use(middleware.CORS())
 
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
