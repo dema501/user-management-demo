@@ -63,12 +63,14 @@ var _ = Describe("User API", func() {
 
 	It("should create a user successfully", func() {
 		user := models.UserCreateRequest{
-			UserName:   "test",
-			FirstName:  "John",
-			LastName:   "Doe",
-			Email:      "john@doe.com",
-			UserStatus: models.UserStatusActive,
-			Department: "IT",
+			UserCommon: models.UserCommon{
+				UserName:   "test",
+				FirstName:  "John",
+				LastName:   "Doe",
+				Email:      "john@doe.com",
+				UserStatus: models.UserStatusActive,
+				Department: "IT",
+			},
 		}
 		jsonBody, err := json.Marshal(user)
 		Expect(err).NotTo(HaveOccurred())
@@ -82,9 +84,11 @@ var _ = Describe("User API", func() {
 	It("should return BadRequest when creating a user with invalid data", func() {
 		// Missing required fields
 		user := models.UserCreateRequest{
-			// Missing UserName
-			FirstName: "John",
-			// Missing other required fields
+			UserCommon: models.UserCommon{
+				// Missing UserName
+				FirstName: "John",
+				// Missing other required fields
+			},
 		}
 		jsonBody, err := json.Marshal(user)
 		Expect(err).NotTo(HaveOccurred())
@@ -104,12 +108,14 @@ var _ = Describe("User API", func() {
 
 	It("should update an existing user", func() {
 		updateData := models.UserUpdateRequest{
-			UserName:   "test",
-			FirstName:  "John",
-			LastName:   "Doe",
-			Email:      "john@doe.com",
-			UserStatus: models.UserStatusTerminated,
-			Department: "IT & Co",
+			UserCommon: models.UserCommon{
+				UserName:   "test",
+				FirstName:  "John",
+				LastName:   "Doe",
+				Email:      "john@doe.com",
+				UserStatus: models.UserStatusTerminated,
+				Department: "IT & Co",
+			},
 		}
 		jsonBody, err := json.Marshal(updateData)
 		Expect(err).NotTo(HaveOccurred())
@@ -123,12 +129,14 @@ var _ = Describe("User API", func() {
 	It("should return BadRequest when updating a user with invalid data", func() {
 		// Invalid email format
 		updateData := models.UserUpdateRequest{
-			UserName:   "test",
-			FirstName:  "John",
-			LastName:   "Doe",
-			Email:      "invalid-email", // Invalid email format
-			UserStatus: models.UserStatusActive,
-			Department: "Sales Dep",
+			UserCommon: models.UserCommon{
+				UserName:   "test",
+				FirstName:  "John",
+				LastName:   "Doe",
+				Email:      "invalid-email", // Invalid email format
+				UserStatus: models.UserStatusActive,
+				Department: "Sales Dep",
+			},
 		}
 		jsonBody, err := json.Marshal(updateData)
 		Expect(err).NotTo(HaveOccurred())

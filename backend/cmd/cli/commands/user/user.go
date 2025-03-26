@@ -18,6 +18,8 @@ import (
 	"user-management/internal/models"
 	"user-management/internal/repository"
 	"user-management/internal/services"
+
+	vld "user-management/internal/validator"
 )
 
 // validate is a singleton validator for better performance
@@ -29,7 +31,9 @@ var (
 // getValidator returns a singleton validator instance
 func getValidator() *validator.Validate {
 	once.Do(func() {
-		validate = validator.New()
+		if v, err := vld.NewValidator(); err == nil {
+			validate = v
+		}
 	})
 	return validate
 }
@@ -178,12 +182,14 @@ func CreateCommand() *cli.Command {
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			req := models.UserCreateRequest{
-				UserName:   cmd.String("username"),
-				FirstName:  cmd.String("first-name"),
-				LastName:   cmd.String("last-name"),
-				Email:      cmd.String("email"),
-				UserStatus: models.UserStatus(cmd.String("status")),
-				Department: cmd.String("department"),
+				UserCommon: models.UserCommon{
+					UserName:   cmd.String("username"),
+					FirstName:  cmd.String("first-name"),
+					LastName:   cmd.String("last-name"),
+					Email:      cmd.String("email"),
+					UserStatus: models.UserStatus(cmd.String("status")),
+					Department: cmd.String("department"),
+				},
 			}
 
 			if err := getValidator().Struct(req); err != nil {
@@ -259,12 +265,14 @@ func UpdateCommand() *cli.Command {
 			}
 
 			req := models.UserUpdateRequest{
-				UserName:   cmd.String("username"),
-				FirstName:  cmd.String("first-name"),
-				LastName:   cmd.String("last-name"),
-				Email:      cmd.String("email"),
-				UserStatus: models.UserStatus(cmd.String("status")),
-				Department: cmd.String("department"),
+				UserCommon: models.UserCommon{
+					UserName:   cmd.String("username"),
+					FirstName:  cmd.String("first-name"),
+					LastName:   cmd.String("last-name"),
+					Email:      cmd.String("email"),
+					UserStatus: models.UserStatus(cmd.String("status")),
+					Department: cmd.String("department"),
+				},
 			}
 
 			if err := getValidator().Struct(req); err != nil {

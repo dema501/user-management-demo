@@ -67,6 +67,7 @@ func main() {
 					db.CreateGoCommand(),
 					db.CreateSQLCommand(),
 					db.StatusCommand(),
+					db.TruncateUserTableCommand(),
 				},
 			},
 			{

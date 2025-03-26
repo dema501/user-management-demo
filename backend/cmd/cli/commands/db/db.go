@@ -14,6 +14,7 @@ import (
 	"github.com/urfave/cli/v3"
 
 	"user-management/internal/migrations"
+	"user-management/internal/models"
 )
 
 // initDB creates a database connection with the given DSN
@@ -32,24 +33,31 @@ func initDB(dsn string) (*bun.DB, error) {
 	return bun.NewDB(sqldb, pgdialect.New()), nil
 }
 
+// commonCommandAction is a helper function to reduce code duplication
+func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(*migrate.Migrator, context.Context) error) error {
+	db, err := initDB(cmd.String("dsn"))
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err := db.Close(); err != nil {
+			slog.With("error", err).Error("failed to close database connection")
+		}
+	}()
+
+	migrator := migrate.NewMigrator(db, migrations.Migrations)
+
+	return operation(migrator, ctx)
+}
+
 func InitCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "init",
 		Usage: "create migration tables",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
-				}
-			}()
-
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
-
-			return migrator.Init(ctx)
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				return migrator.Init(ctx)
+			})
 		},
 	}
 }
@@ -59,35 +67,25 @@ func MigrateCommand() *cli.Command {
 		Name:  "migrate",
 		Usage: "migrate database",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				if err := migrator.Lock(ctx); err != nil {
+					return err
 				}
-			}()
+				defer migrator.Unlock(ctx) //nolint:errcheck
 
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
+				group, err := migrator.Migrate(ctx)
+				if err != nil {
+					return err
+				}
+				if group.IsZero() {
+					slog.Info("there are no new migrations to run (database is up to date)")
+					return nil
+				}
 
-			if err := migrator.Lock(ctx); err != nil {
-				return err
-			}
-			defer migrator.Unlock(ctx) //nolint:errcheck
-
-			group, err := migrator.Migrate(ctx)
-			if err != nil {
-				return err
-			}
-			if group.IsZero() {
-				slog.Info("there are no new migrations to run (database is up to date)")
+				slog.With("group", group.String()).
+					Info("migrated to")
 				return nil
-			}
-
-			slog.With("group", group.String()).
-				Info("migrated to")
-			return nil
+			})
 		},
 	}
 }
@@ -134,19 +132,9 @@ func LockCommand() *cli.Command {
 		Name:  "lock",
 		Usage: "lock migrations",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
-				}
-			}()
-
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
-
-			return migrator.Lock(ctx)
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				return migrator.Lock(ctx)
+			})
 		},
 	}
 }
@@ -156,19 +144,9 @@ func UnlockCommand() *cli.Command {
 		Name:  "unlock",
 		Usage: "unlock migrations",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
-				}
-			}()
-
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
-
-			return migrator.Unlock(ctx)
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				return migrator.Unlock(ctx)
+			})
 		},
 	}
 }
@@ -180,28 +158,18 @@ func CreateGoCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			name := strings.Join(cmd.Args().Slice(), "_")
 
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				mf, err := migrator.CreateGoMigration(ctx, name)
+				if err != nil {
+					return err
 				}
-			}()
 
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
+				slog.With("name", mf.Name).
+					With("path", mf.Path).
+					Info("created migration")
 
-			mf, err := migrator.CreateGoMigration(ctx, name)
-			if err != nil {
-				return err
-			}
-
-			slog.With("name", mf.Name).
-				With("path", mf.Path).
-				Info("created migration")
-
-			return nil
+				return nil
+			})
 		},
 	}
 }
@@ -213,30 +181,20 @@ func CreateSQLCommand() *cli.Command {
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			name := strings.Join(cmd.Args().Slice(), "_")
 
-			db, err := initDB(cmd.String("dsn"))
-			if err != nil {
-				return err
-			}
-			defer func() {
-				if err := db.Close(); err != nil {
-					slog.With("error", err).Error("failed to close database connection")
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				files, err := migrator.CreateSQLMigrations(ctx, name)
+				if err != nil {
+					return err
 				}
-			}()
 
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
+				for _, mf := range files {
+					slog.With("name", mf.Name).
+						With("path", mf.Path).
+						Info("created migration")
+				}
 
-			files, err := migrator.CreateSQLMigrations(ctx, name)
-			if err != nil {
-				return err
-			}
-
-			for _, mf := range files {
-				slog.With("name", mf.Name).
-					With("path", mf.Path).
-					Info("created migration")
-			}
-
-			return nil
+				return nil
+			})
 		},
 	}
 }
@@ -245,6 +203,28 @@ func StatusCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "status",
 		Usage: "show migration status",
+		Action: func(ctx context.Context, cmd *cli.Command) error {
+			return commonCommandAction(ctx, cmd, func(migrator *migrate.Migrator, ctx context.Context) error {
+				ms, err := migrator.MigrationsWithStatus(ctx)
+				if err != nil {
+					return err
+				}
+
+				slog.With("status", ms).
+					With("unapplied", ms.Unapplied()).
+					With("last_group", ms.LastGroup()).
+					Info("migration status")
+
+				return nil
+			})
+		},
+	}
+}
+
+func TruncateUserTableCommand() *cli.Command {
+	return &cli.Command{
+		Name:  "truncate_user_table",
+		Usage: "truncate the user table",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			db, err := initDB(cmd.String("dsn"))
 			if err != nil {
@@ -256,17 +236,12 @@ func StatusCommand() *cli.Command {
 				}
 			}()
 
-			migrator := migrate.NewMigrator(db, migrations.Migrations)
-
-			ms, err := migrator.MigrationsWithStatus(ctx)
+			err = db.ResetModel(ctx, (*models.User)(nil))
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to reset user model: %w", err)
 			}
 
-			slog.With("status", ms).
-				With("unapplied", ms.Unapplied()).
-				With("last_group", ms.LastGroup()).
-				Info("migration status")
+			slog.Info("user table truncated")
 
 			return nil
 		},
