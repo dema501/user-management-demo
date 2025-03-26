@@ -28,15 +28,17 @@ func TestUserModel(t *testing.T) {
 
 		now := time.Now().UTC()
 		user := User{
-			UserID:     123,
-			UserName:   "testuser",
-			FirstName:  "Test",
-			LastName:   "User",
-			Email:      "test@example.com",
-			UserStatus: UserStatusActive,
-			Department: "Testing",
-			CreatedAt:  now,
-			UpdatedAt:  now,
+			UserID: 123,
+			UserCommon: UserCommon{
+				UserName:   "testuser",
+				FirstName:  "Test",
+				LastName:   "User",
+				Email:      "test@example.com",
+				UserStatus: UserStatusActive,
+				Department: "Testing",
+			},
+			CreatedAt: now,
+			UpdatedAt: now,
 		}
 
 		assert.Equal(t, int64(123), user.UserID)
@@ -68,24 +70,28 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Valid Request",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: false,
 		},
 		{
 			name: "Username Too Short",
 			request: UserCreateRequest{
-				UserName:   "usr",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "usr",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserName",
@@ -94,12 +100,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Username With Non-Alphanumeric Characters",
 			request: UserCreateRequest{
-				UserName:   "user-name",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "user-name",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserName",
@@ -108,12 +116,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Missing First Name",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "FirstName",
@@ -122,12 +132,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "First Name With Special Characters",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "First@Name",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "First@Name",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "FirstName",
@@ -136,12 +148,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Missing Last Name",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "LastName",
@@ -150,12 +164,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Last Name With Special Characters",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "Last@Name",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "Last@Name",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "LastName",
@@ -164,12 +180,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Invalid Email Format",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "invalid-email",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "invalid-email",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "Email",
@@ -178,12 +196,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Missing Email",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "Email",
@@ -192,12 +212,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Invalid User Status",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: "X", // Invalid status
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: "X", // Invalid status
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserStatus",
@@ -206,12 +228,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Empty User Status",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: "",
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: "",
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserStatus",
@@ -220,12 +244,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Department With Special Characters",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing@Department", // Contains special character
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing@Department", // Contains special character
+				},
 			},
 			expectedError: true,
 			errorField:    "Department",
@@ -234,12 +260,14 @@ func TestUserCreateRequestValidation(t *testing.T) {
 		{
 			name: "Optional Department Can Be Empty",
 			request: UserCreateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "", // Optional field
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "", // Optional field
+				},
 			},
 			expectedError: false,
 		},
@@ -294,24 +322,28 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Valid Update Request",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: false,
 		},
 		{
 			name: "Username Too Short",
 			request: UserUpdateRequest{
-				UserName:   "usr",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "usr",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserName",
@@ -320,12 +352,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Username With Non-Alphanumeric Characters",
 			request: UserUpdateRequest{
-				UserName:   "user-name",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "user-name",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserName",
@@ -334,12 +368,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Missing Username",
 			request: UserUpdateRequest{
-				UserName:   "",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserName",
@@ -348,12 +384,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Missing First Name",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "FirstName",
@@ -362,12 +400,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "First Name With Special Characters",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "First@Name",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "First@Name",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "FirstName",
@@ -376,12 +416,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Missing Last Name",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "LastName",
@@ -390,12 +432,13 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Last Name With Special Characters",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "Last@Name",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "Last@Name",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing"},
 			},
 			expectedError: true,
 			errorField:    "LastName",
@@ -404,12 +447,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Invalid Email Format",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "invalid-email",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "invalid-email",
+					UserStatus: UserStatusActive,
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "Email",
@@ -418,12 +463,13 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Missing Email",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "",
-				UserStatus: UserStatusActive,
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "",
+					UserStatus: UserStatusActive,
+					Department: "Testing"},
 			},
 			expectedError: true,
 			errorField:    "Email",
@@ -432,12 +478,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Invalid User Status",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: "X", // Invalid status
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: "X", // Invalid status
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserStatus",
@@ -446,12 +494,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Empty User Status",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: "",
-				Department: "Testing",
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: "",
+					Department: "Testing",
+				},
 			},
 			expectedError: true,
 			errorField:    "UserStatus",
@@ -460,12 +510,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Department With Special Characters",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "Testing@Department", // Contains special character
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "Testing@Department", // Contains special character
+				},
 			},
 			expectedError: true,
 			errorField:    "Department",
@@ -474,12 +526,14 @@ func TestUserUpdateRequestValidation(t *testing.T) {
 		{
 			name: "Optional Department Can Be Empty",
 			request: UserUpdateRequest{
-				UserName:   "validuser",
-				FirstName:  "Valid",
-				LastName:   "User",
-				Email:      "valid@example.com",
-				UserStatus: UserStatusActive,
-				Department: "", // Optional field
+				UserCommon{
+					UserName:   "validuser",
+					FirstName:  "Valid",
+					LastName:   "User",
+					Email:      "valid@example.com",
+					UserStatus: UserStatusActive,
+					Department: "", // Optional field
+				},
 			},
 			expectedError: false,
 		},

@@ -224,33 +224,63 @@ const docTemplate = `{
     "definitions": {
         "user-management_internal_models.User": {
             "type": "object",
+            "required": [
+                "email",
+                "firstName",
+                "lastName",
+                "userName",
+                "userStatus"
+            ],
             "properties": {
                 "createdAt": {
                     "type": "string"
                 },
                 "department": {
-                    "type": "string"
+                    "description": "Department the user belongs to, alphanumeric with spaces allowed\nmaxLength: 255\nexample: Engineering",
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "email": {
-                    "type": "string"
+                    "description": "Email address of the user, must be a valid email format\nrequired: true\nmaxLength: 255\nformat: email\nexample: john.doe@example.com",
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "firstName": {
-                    "type": "string"
+                    "description": "The first name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: John",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "id": {
                     "type": "integer"
                 },
                 "lastName": {
-                    "type": "string"
+                    "description": "The last name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: Doe",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "updatedAt": {
                     "type": "string"
                 },
                 "userName": {
-                    "type": "string"
+                    "description": "The username for the user, must be provided, minimum 4 alphanumeric characters\nrequired: true\nminLength: 4\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: johndoe",
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 4
                 },
                 "userStatus": {
-                    "$ref": "#/definitions/user-management_internal_models.UserStatus"
+                    "description": "Status of the user (A=Active, I=Inactive, T=Terminated)\nrequired: true\nenum: A,I,T\nexample: A",
+                    "enum": [
+                        "A",
+                        "I",
+                        "T"
+                    ],
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/user-management_internal_models.UserStatus"
+                        }
+                    ]
                 }
             }
         },

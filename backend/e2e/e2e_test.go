@@ -113,12 +113,14 @@ func TestUserCreationE2E(t *testing.T) {
 	t.Run("CreateUser", func(t *testing.T) {
 		// Create a test user using your models.UserCreateRequest
 		userRequest := models.UserCreateRequest{
-			UserName:   "johndoe",
-			FirstName:  "John",
-			LastName:   "Doe",
-			Email:      "john.doe@example.com",
-			UserStatus: models.UserStatusActive,
-			Department: "Engineering",
+			UserCommon: models.UserCommon{
+				UserName:   "johndoe",
+				FirstName:  "John",
+				LastName:   "Doe",
+				Email:      "john.doe@example.com",
+				UserStatus: models.UserStatusActive,
+				Department: "Engineering",
+			},
 		}
 
 		// Convert request to JSON
@@ -248,12 +250,14 @@ func TestUserCreationE2E(t *testing.T) {
 
 		// Create update request
 		updateRequest := models.UserUpdateRequest{
-			UserName:   user.UserName, // Keep same username
-			FirstName:  "Johnny",      // Change first name
-			LastName:   "Doeson",      // Change last name
-			Email:      user.Email,    // Change email
-			UserStatus: models.UserStatusActive,
-			Department: "ResearchDevelopment", // Change department
+			UserCommon: models.UserCommon{
+				UserName:   user.UserName, // Keep same username
+				FirstName:  "Johnny",      // Change first name
+				LastName:   "Doeson",      // Change last name
+				Email:      user.Email,    // Change email
+				UserStatus: models.UserStatusActive,
+				Department: "Research Development", // Change department
+			},
 		}
 
 		// Convert request to JSON

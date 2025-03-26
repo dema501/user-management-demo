@@ -54,14 +54,16 @@ func (s *userService) CreateUser(ctx context.Context, req models.UserCreateReque
 	}
 
 	user := &models.User{
-		UserName:   req.UserName,
-		FirstName:  req.FirstName,
-		LastName:   req.LastName,
-		Email:      req.Email,
-		UserStatus: req.UserStatus,
-		Department: req.Department,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		UserCommon: models.UserCommon{
+			UserName:   req.UserName,
+			FirstName:  req.FirstName,
+			LastName:   req.LastName,
+			Email:      req.Email,
+			UserStatus: req.UserStatus,
+			Department: req.Department,
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	if err := s.repo.Create(ctx, user); err != nil {

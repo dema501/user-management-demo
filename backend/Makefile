@@ -38,11 +38,6 @@ generate-types:
 	@echo "Generating TypeScript definitions..."
 	@tygo generate
 
-# Start development environment with hot reload
-dev:
-	@echo "Starting development server with air..."
-	@which air > /dev/null || go install github.com/cosmtrek/air@latest
-	@air -c .air.toml
 
 # Display help information
 help:
@@ -55,5 +50,5 @@ help:
 	@echo "  test     - Run tests"
 	@echo "  docs     - Generate API documentation"
 	@echo "  swagger  - Generate Swagger documentation"
-	@echo "  dev      - Run with hot reload using Air"
+	@echo "  generate-types - Generate TypeScript definitions"
 	@echo "  help     - Show this help message"
