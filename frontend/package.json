@@ -12,6 +12,7 @@
     "lint:style:fix": "stylelint src/**/*.scss --fix",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --browsers Firefox",
+    "test:ci": "ng test --no-watch --browsers=FirefoxHeadless --code-coverage",
     "check:license": "npx --yes license-checker-rseidelsohn --relativeModulePath --relativeLicensePath --onlyAllow 'MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;BlueOak-1.0.0;Python-2.0;0BSD;MPL-2.0;Unlicense;UNLICENSED;CC-BY-3.0;CC-BY-4.0;CC0-1.0'"
   },
   "private": true,

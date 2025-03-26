@@ -141,10 +141,19 @@ export class UserFormComponent implements OnInit {
     this.isSubmitting = false;
 
     const defaultErrorMessage = "An error occurred. Please try again.";
-    this.errorMessage =
-      error instanceof Error && error.message?.trim()
-        ? error.message
-        : defaultErrorMessage;
+
+    if (error instanceof Error) {
+      this.errorMessage = error.message?.trim() || defaultErrorMessage;
+    } else if (
+      typeof error === "object" &&
+      error !== null &&
+      "error" in error
+    ) {
+      const errorObj = error as { error: { error?: string } };
+      this.errorMessage = errorObj.error?.error || defaultErrorMessage;
+    } else {
+      this.errorMessage = defaultErrorMessage;
+    }
 
     // eslint-disable-next-line no-console
     console.error(error);
