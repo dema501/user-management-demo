@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, OnDestroy } from "@angular/core";
 import { NgIf, NgFor } from "@angular/common";
 import {
   FormsModule,
@@ -19,6 +19,7 @@ import {
 } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatRadioModule } from "@angular/material/radio";
+import { Subscription } from "rxjs";
 
 import {
   User,
@@ -52,7 +53,9 @@ interface DialogData {
     MatSnackBarModule,
   ],
 })
-export class UserFormComponent implements OnInit {
+export class UserFormComponent implements OnInit, OnDestroy {
+  private subscriptions: Subscription[] = [];
+
   userForm!: FormGroup;
   isSubmitting = false;
   errorMessage = "";
@@ -73,6 +76,10 @@ export class UserFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   initForm(): void {
@@ -110,7 +117,7 @@ export class UserFormComponent implements OnInit {
 
     if (this.data.mode === "create") {
       const userRequest: UserCreateRequest = this.userForm.value;
-      this.userService.createUser(userRequest).subscribe({
+      const sub = this.userService.createUser(userRequest).subscribe({
         next: () => {
           this.snackBar.open("User created successfully", "Close", {
             duration: 3000,
@@ -121,19 +128,23 @@ export class UserFormComponent implements OnInit {
           this.handleError(error);
         },
       });
+      this.subscriptions.push(sub);
     } else if (this.data.mode === "edit" && this.data.user) {
       const userRequest: UserUpdateRequest = this.userForm.value;
-      this.userService.updateUser(this.data.user.id, userRequest).subscribe({
-        next: () => {
-          this.snackBar.open("User updated successfully", "Close", {
-            duration: 3000,
-          });
-          this.dialogRef.close(true);
-        },
-        error: (error: unknown) => {
-          this.handleError(error);
-        },
-      });
+      const sub = this.userService
+        .updateUser(this.data.user.id, userRequest)
+        .subscribe({
+          next: () => {
+            this.snackBar.open("User updated successfully", "Close", {
+              duration: 3000,
+            });
+            this.dialogRef.close(true);
+          },
+          error: (error: unknown) => {
+            this.handleError(error);
+          },
+        });
+      this.subscriptions.push(sub);
     }
   }
 
