@@ -18,6 +18,7 @@ on:
 
 jobs:
   test:
+    name: Lint & Test & Build
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -50,6 +51,6 @@ jobs:
         run: yarn test:ci
         working-directory: frontend
 
-      - name: build frontend
-        run: yarn build
+      - name: Build frontend
+        run: yarn run build
         working-directory: backend
