@@ -45,5 +45,5 @@ jobs:
 
       - name: build backend
         run: |
-          CGO_ENABLED=0 go build  -race -trimpath -ldflags="-w -s" ./cmd/rest/main.go
+          go build  -race -trimpath -ldflags="-w -s" ./cmd/rest/main.go
         working-directory: backend
