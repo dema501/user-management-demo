@@ -52,5 +52,5 @@ jobs:
         working-directory: frontend
 
       - name: Build frontend
-        run: yarn run build
-        working-directory: backend
+        run: yarn build
+        working-directory: frontend
