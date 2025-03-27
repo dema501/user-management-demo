@@ -26,7 +26,7 @@ func PingCommand() *cli.Command {
 				}
 			}()
 
-			err = db.Ping()
+			err = db.PingContext(ctx)
 			if err != nil {
 				return fmt.Errorf("failed to ping database: %w", err)
 			}
