@@ -327,3 +327,18 @@ func DeleteCommand() *cli.Command {
 		},
 	}
 }
+
+// RegisterCommands registers all user management commands
+func RegisterCommands() *cli.Command {
+	return &cli.Command{
+		Name:  "user",
+		Usage: "User management commands",
+		Commands: []*cli.Command{
+			ListCommand(),
+			CreateCommand(),
+			GetCommand(),
+			UpdateCommand(),
+			DeleteCommand(),
+		},
+	}
+}

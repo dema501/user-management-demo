@@ -1,37 +1,19 @@
+//go:build migrate_tools
+
 package db
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"strings"
 
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
 	"github.com/uptrace/bun/migrate"
 	"github.com/urfave/cli/v3"
 
 	"user-management/internal/migrations"
 	"user-management/internal/models"
 )
-
-// initDB creates a database connection with the given DSN
-func initDB(dsn string) (*bun.DB, error) {
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
-
-	// Set connection pool parameters
-	sqldb.SetMaxOpenConns(8)
-	sqldb.SetMaxIdleConns(4)
-
-	// Check if the connection is valid
-	if err := sqldb.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to connect to database: %w", err)
-	}
-
-	return bun.NewDB(sqldb, pgdialect.New()), nil
-}
 
 // commonCommandAction is a helper function to reduce code duplication
 func commonCommandAction(ctx context.Context, cmd *cli.Command, operation func(*migrate.Migrator, context.Context) error) error {
@@ -253,6 +235,23 @@ func TruncateUserTableCommand() *cli.Command {
 			slog.Info("user table truncated")
 
 			return nil
+		},
+	}
+}
+
+func RegisterCommands() *cli.Command {
+	return &cli.Command{
+		Name:  "db",
+		Usage: "Database management commands",
+		Commands: []*cli.Command{
+			InitCommand(),
+			MigrateCommand(),
+			RollbackCommand(),
+			UnlockCommand(),
+			CreateGoCommand(),
+			CreateSQLCommand(),
+			StatusCommand(),
+			TruncateUserTableCommand(),
 		},
 	}
 }
