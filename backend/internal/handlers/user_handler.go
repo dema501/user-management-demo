@@ -22,12 +22,12 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 }
 
 // ListUsers godoc
-// @Summary List all users
-// @Description get all users
-// @Accept  json
-// @Produce  json
-// @Success 200 {array} models.User
-// @Router /users [get]
+//	@Summary		List all users
+//	@Description	get all users
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	models.User
+//	@Router			/users [get]
 func (h *UserHandler) ListUsers(c echo.Context) error {
 	ctx := c.Request().Context()
 	users, err := h.userService.ListUsers(ctx)
@@ -38,14 +38,14 @@ func (h *UserHandler) ListUsers(c echo.Context) error {
 }
 
 // GetUser godoc
-// @Summary Get a user
-// @Description get user by ID
-// @Accept  json
-// @Produce  json
-// @Param id path string true "User ID (int64)"
-// @Success 200 {object} models.User
-// @Failure 404 {object} map[string]string
-// @Router /users/{id} [get]
+//	@Summary		Get a user
+//	@Description	get user by ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"User ID (int64)"
+//	@Success		200	{object}	models.User
+//	@Failure		404	{object}	map[string]string
+//	@Router			/users/{id} [get]
 func (h *UserHandler) GetUser(c echo.Context) error {
 	ctx := c.Request().Context()
 	idStr := c.Param("id")
@@ -63,15 +63,15 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 }
 
 // CreateUser godoc
-// @Summary Create a user
-// @Description create a new user
-// @Accept  json
-// @Produce  json
-// @Param user body models.UserCreateRequest true "User Data"
-// @Success 201 {object} models.User
-// @Failure 400 {object} map[string]string
-// @Failure 422 {object} map[string]string
-// @Router /users [post]
+//	@Summary		Create a user
+//	@Description	create a new user
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		models.UserCreateRequest	true	"User Data"
+//	@Success		201		{object}	models.User
+//	@Failure		400		{object}	map[string]string
+//	@Failure		422		{object}	map[string]string
+//	@Router			/users [post]
 func (h *UserHandler) CreateUser(c echo.Context) error {
 	ctx := c.Request().Context()
 	var req models.UserCreateRequest
@@ -92,17 +92,17 @@ func (h *UserHandler) CreateUser(c echo.Context) error {
 }
 
 // UpdateUser godoc
-// @Summary Update a user
-// @Description update a user by ID
-// @Accept  json
-// @Produce  json
-// @Param id path string true "User ID (int64)"
-// @Param user body models.UserUpdateRequest true "User Data"
-// @Success 200 {object} models.User
-// @Failure 400 {object} map[string]string
-// @Failure 404 {object} map[string]string
-// @Failure 422 {object} map[string]string
-// @Router /users/{id} [put]
+//	@Summary		Update a user
+//	@Description	update a user by ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		string						true	"User ID (int64)"
+//	@Param			user	body		models.UserUpdateRequest	true	"User Data"
+//	@Success		200		{object}	models.User
+//	@Failure		400		{object}	map[string]string
+//	@Failure		404		{object}	map[string]string
+//	@Failure		422		{object}	map[string]string
+//	@Router			/users/{id} [put]
 func (h *UserHandler) UpdateUser(c echo.Context) error {
 	ctx := c.Request().Context()
 	idStr := c.Param("id")
@@ -132,14 +132,14 @@ func (h *UserHandler) UpdateUser(c echo.Context) error {
 }
 
 // DeleteUser godoc
-// @Summary Delete a user
-// @Description delete a user by ID
-// @Accept  json
-// @Produce  json
-// @Param id path string true "User ID (int64)"
-// @Success 204 {object} nil
-// @Failure 400 {object} map[string]string
-// @Router /users/{id} [delete]
+//	@Summary		Delete a user
+//	@Description	delete a user by ID
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		string	true	"User ID (int64)"
+//	@Success		204	{object}	nil
+//	@Failure		400	{object}	map[string]string
+//	@Router			/users/{id} [delete]
 func (h *UserHandler) DeleteUser(c echo.Context) error {
 	ctx := c.Request().Context()
 	idStr := c.Param("id")

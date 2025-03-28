@@ -32,7 +32,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/user-management_internal_models.User"
+                                "$ref": "#/definitions/User"
                             }
                         }
                     }
@@ -54,7 +54,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user-management_internal_models.UserCreateRequest"
+                            "$ref": "#/definitions/UserCreateRequest"
                         }
                     }
                 ],
@@ -62,7 +62,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/user-management_internal_models.User"
+                            "$ref": "#/definitions/User"
                         }
                     },
                     "400": {
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user-management_internal_models.User"
+                            "$ref": "#/definitions/User"
                         }
                     },
                     "404": {
@@ -146,7 +146,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user-management_internal_models.UserUpdateRequest"
+                            "$ref": "#/definitions/UserUpdateRequest"
                         }
                     }
                 ],
@@ -154,7 +154,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/user-management_internal_models.User"
+                            "$ref": "#/definitions/User"
                         }
                     },
                     "400": {
@@ -222,7 +222,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "user-management_internal_models.User": {
+        "User": {
             "type": "object",
             "required": [
                 "email",
@@ -233,44 +233,55 @@ const docTemplate = `{
             ],
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-03-27T10:23:51.495798-05:00"
                 },
                 "department": {
-                    "description": "Department the user belongs to, alphanumeric with spaces allowed\nmaxLength: 255\nexample: Engineering",
+                    "description": "Department\n\t@maxLength\t255\n\t@example\tEngineering",
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "Engineering"
                 },
                 "email": {
-                    "description": "Email address of the user, must be a valid email format\nrequired: true\nmaxLength: 255\nformat: email\nexample: john.doe@example.com",
+                    "description": "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com",
                     "type": "string",
-                    "maxLength": 255
+                    "format": "email",
+                    "maxLength": 255,
+                    "example": "john.doe@example.com"
                 },
                 "firstName": {
-                    "description": "The first name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: John",
+                    "description": "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "John"
                 },
                 "id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 1
                 },
                 "lastName": {
-                    "description": "The last name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: Doe",
+                    "description": "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "Doe"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2025-03-27T10:23:51.495798-05:00"
                 },
                 "userName": {
-                    "description": "The username for the user, must be provided, minimum 4 alphanumeric characters\nrequired: true\nminLength: 4\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: johndoe",
+                    "description": "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 4
+                    "minLength": 4,
+                    "example": "johndoe"
                 },
                 "userStatus": {
-                    "description": "Status of the user (A=Active, I=Inactive, T=Terminated)\nrequired: true\nenum: A,I,T\nexample: A",
+                    "description": "User Status\n\t@enum\t\tA,I,T\n\t@example\tA",
                     "enum": [
                         "A",
                         "I",
@@ -278,13 +289,14 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/user-management_internal_models.UserStatus"
+                            "$ref": "#/definitions/UserStatus"
                         }
-                    ]
+                    ],
+                    "example": "A"
                 }
             }
         },
-        "user-management_internal_models.UserCreateRequest": {
+        "UserCreateRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -295,35 +307,41 @@ const docTemplate = `{
             ],
             "properties": {
                 "department": {
-                    "description": "Department the user belongs to, alphanumeric with spaces allowed\nmaxLength: 255\nexample: Engineering",
+                    "description": "Department\n\t@maxLength\t255\n\t@example\tEngineering",
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "Engineering"
                 },
                 "email": {
-                    "description": "Email address of the user, must be a valid email format\nrequired: true\nmaxLength: 255\nformat: email\nexample: john.doe@example.com",
+                    "description": "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com",
                     "type": "string",
-                    "maxLength": 255
+                    "format": "email",
+                    "maxLength": 255,
+                    "example": "john.doe@example.com"
                 },
                 "firstName": {
-                    "description": "The first name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: John",
+                    "description": "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "John"
                 },
                 "lastName": {
-                    "description": "The last name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: Doe",
+                    "description": "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "Doe"
                 },
                 "userName": {
-                    "description": "The username for the user, must be provided, minimum 4 alphanumeric characters\nrequired: true\nminLength: 4\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: johndoe",
+                    "description": "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 4
+                    "minLength": 4,
+                    "example": "johndoe"
                 },
                 "userStatus": {
-                    "description": "Status of the user (A=Active, I=Inactive, T=Terminated)\nrequired: true\nenum: A,I,T\nexample: A",
+                    "description": "User Status\n\t@enum\t\tA,I,T\n\t@example\tA",
                     "enum": [
                         "A",
                         "I",
@@ -331,13 +349,14 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/user-management_internal_models.UserStatus"
+                            "$ref": "#/definitions/UserStatus"
                         }
-                    ]
+                    ],
+                    "example": "A"
                 }
             }
         },
-        "user-management_internal_models.UserStatus": {
+        "UserStatus": {
             "type": "string",
             "enum": [
                 "A",
@@ -350,7 +369,7 @@ const docTemplate = `{
                 "UserStatusTerminated"
             ]
         },
-        "user-management_internal_models.UserUpdateRequest": {
+        "UserUpdateRequest": {
             "type": "object",
             "required": [
                 "email",
@@ -361,35 +380,41 @@ const docTemplate = `{
             ],
             "properties": {
                 "department": {
-                    "description": "Department the user belongs to, alphanumeric with spaces allowed\nmaxLength: 255\nexample: Engineering",
+                    "description": "Department\n\t@maxLength\t255\n\t@example\tEngineering",
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "Engineering"
                 },
                 "email": {
-                    "description": "Email address of the user, must be a valid email format\nrequired: true\nmaxLength: 255\nformat: email\nexample: john.doe@example.com",
+                    "description": "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com",
                     "type": "string",
-                    "maxLength": 255
+                    "format": "email",
+                    "maxLength": 255,
+                    "example": "john.doe@example.com"
                 },
                 "firstName": {
-                    "description": "The first name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: John",
+                    "description": "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "John"
                 },
                 "lastName": {
-                    "description": "The last name of the user, must be provided, minimum 1 character, can have spaces\nrequired: true\nminLength: 1\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: Doe",
+                    "description": "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 1
+                    "minLength": 1,
+                    "example": "Doe"
                 },
                 "userName": {
-                    "description": "The username for the user, must be provided, minimum 4 alphanumeric characters\nrequired: true\nminLength: 4\nmaxLength: 255\npattern: ^[a-zA-Z0-9]+$\nexample: johndoe",
+                    "description": "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe",
                     "type": "string",
                     "maxLength": 255,
-                    "minLength": 4
+                    "minLength": 4,
+                    "example": "johndoe"
                 },
                 "userStatus": {
-                    "description": "Status of the user (A=Active, I=Inactive, T=Terminated)\nrequired: true\nenum: A,I,T\nexample: A",
+                    "description": "User Status\n\t@enum\t\tA,I,T\n\t@example\tA",
                     "enum": [
                         "A",
                         "I",
@@ -397,9 +422,10 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/user-management_internal_models.UserStatus"
+                            "$ref": "#/definitions/UserStatus"
                         }
-                    ]
+                    ],
+                    "example": "A"
                 }
             }
         }
