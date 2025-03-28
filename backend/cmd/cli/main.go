@@ -28,6 +28,15 @@ func main() {
 		With("app", appName).
 		Info("starting")
 
+	var subCommands []*cli.Command
+	if dbc := db.RegisterCommands(); dbc != nil {
+		subCommands = append(subCommands, dbc)
+	}
+
+	if uc := user.RegisterCommands(); uc != nil {
+		subCommands = append(subCommands, uc)
+	}
+
 	app := &cli.Command{
 		Name:                   appName,
 		Usage:                  "User management CLI tool",
@@ -38,6 +47,7 @@ func main() {
 				Usage:    "Database connection string",
 				Required: true,
 				Sources:  cli.EnvVars("DSN"),
+				Config:   cli.StringConfig{TrimSpace: true},
 			},
 			&cli.BoolFlag{
 				Name:    "verbosity",
@@ -55,33 +65,7 @@ func main() {
 				},
 			},
 		},
-		Commands: []*cli.Command{
-			{
-				Name:  "db",
-				Usage: "Database management commands",
-				Commands: []*cli.Command{
-					db.InitCommand(),
-					db.MigrateCommand(),
-					db.RollbackCommand(),
-					db.UnlockCommand(),
-					db.CreateGoCommand(),
-					db.CreateSQLCommand(),
-					db.StatusCommand(),
-					db.TruncateUserTableCommand(),
-				},
-			},
-			{
-				Name:  "user",
-				Usage: "User management commands",
-				Commands: []*cli.Command{
-					user.ListCommand(),
-					user.CreateCommand(),
-					user.GetCommand(),
-					user.UpdateCommand(),
-					user.DeleteCommand(),
-				},
-			},
-		},
+		Commands: subCommands,
 	}
 
 	app.VisibleFlags()

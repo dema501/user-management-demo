@@ -5,7 +5,6 @@ go 1.24.1
 require (
 	github.com/go-playground/validator/v10 v10.25.0
 	github.com/jessevdk/go-flags v1.6.1
-	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/onsi/ginkgo/v2 v2.23.3
 	github.com/onsi/gomega v1.36.3
@@ -21,13 +20,13 @@ require (
 	github.com/uptrace/bun/extra/bunslog v1.2.11
 	github.com/urfave/cli/v3 v3.0.0-beta1
 	go.uber.org/fx v1.23.0
+	golang.org/x/sync v0.12.0
 	golang.org/x/time v0.8.0
 )
 
 require (
 	github.com/KyleBanks/depth v1.2.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
