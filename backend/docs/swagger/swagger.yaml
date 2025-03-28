@@ -1,74 +1,56 @@
 basePath: /api/v1
 definitions:
-  user-management_internal_models.User:
+  User:
     properties:
       createdAt:
+        example: "2025-03-27T10:23:51.495798-05:00"
+        format: date-time
         type: string
       department:
-        description: |-
-          Department the user belongs to, alphanumeric with spaces allowed
-          maxLength: 255
-          example: Engineering
+        description: "Department\n\t@maxLength\t255\n\t@example\tEngineering"
+        example: Engineering
         maxLength: 255
         type: string
       email:
-        description: |-
-          Email address of the user, must be a valid email format
-          required: true
-          maxLength: 255
-          format: email
-          example: john.doe@example.com
+        description: "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com"
+        example: john.doe@example.com
+        format: email
         maxLength: 255
         type: string
       firstName:
-        description: |-
-          The first name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: John
+        description: "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn"
+        example: John
         maxLength: 255
         minLength: 1
         type: string
       id:
+        example: 1
         type: integer
       lastName:
-        description: |-
-          The last name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: Doe
+        description: "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe"
+        example: Doe
         maxLength: 255
         minLength: 1
         type: string
       updatedAt:
+        example: "2025-03-27T10:23:51.495798-05:00"
+        format: date-time
         type: string
       userName:
-        description: |-
-          The username for the user, must be provided, minimum 4 alphanumeric characters
-          required: true
-          minLength: 4
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: johndoe
+        description: "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe"
+        example: johndoe
         maxLength: 255
         minLength: 4
         type: string
       userStatus:
         allOf:
-        - $ref: '#/definitions/user-management_internal_models.UserStatus'
-        description: |-
-          Status of the user (A=Active, I=Inactive, T=Terminated)
-          required: true
-          enum: A,I,T
-          example: A
+        - $ref: '#/definitions/UserStatus'
+        description: "User Status\n\t@enum\t\tA,I,T\n\t@example\tA"
         enum:
         - A
         - I
         - T
+        example: A
     required:
     - email
     - firstName
@@ -76,69 +58,46 @@ definitions:
     - userName
     - userStatus
     type: object
-  user-management_internal_models.UserCreateRequest:
+  UserCreateRequest:
     properties:
       department:
-        description: |-
-          Department the user belongs to, alphanumeric with spaces allowed
-          maxLength: 255
-          example: Engineering
+        description: "Department\n\t@maxLength\t255\n\t@example\tEngineering"
+        example: Engineering
         maxLength: 255
         type: string
       email:
-        description: |-
-          Email address of the user, must be a valid email format
-          required: true
-          maxLength: 255
-          format: email
-          example: john.doe@example.com
+        description: "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com"
+        example: john.doe@example.com
+        format: email
         maxLength: 255
         type: string
       firstName:
-        description: |-
-          The first name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: John
+        description: "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn"
+        example: John
         maxLength: 255
         minLength: 1
         type: string
       lastName:
-        description: |-
-          The last name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: Doe
+        description: "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe"
+        example: Doe
         maxLength: 255
         minLength: 1
         type: string
       userName:
-        description: |-
-          The username for the user, must be provided, minimum 4 alphanumeric characters
-          required: true
-          minLength: 4
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: johndoe
+        description: "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe"
+        example: johndoe
         maxLength: 255
         minLength: 4
         type: string
       userStatus:
         allOf:
-        - $ref: '#/definitions/user-management_internal_models.UserStatus'
-        description: |-
-          Status of the user (A=Active, I=Inactive, T=Terminated)
-          required: true
-          enum: A,I,T
-          example: A
+        - $ref: '#/definitions/UserStatus'
+        description: "User Status\n\t@enum\t\tA,I,T\n\t@example\tA"
         enum:
         - A
         - I
         - T
+        example: A
     required:
     - email
     - firstName
@@ -146,7 +105,7 @@ definitions:
     - userName
     - userStatus
     type: object
-  user-management_internal_models.UserStatus:
+  UserStatus:
     enum:
     - A
     - I
@@ -156,69 +115,46 @@ definitions:
     - UserStatusActive
     - UserStatusInactive
     - UserStatusTerminated
-  user-management_internal_models.UserUpdateRequest:
+  UserUpdateRequest:
     properties:
       department:
-        description: |-
-          Department the user belongs to, alphanumeric with spaces allowed
-          maxLength: 255
-          example: Engineering
+        description: "Department\n\t@maxLength\t255\n\t@example\tEngineering"
+        example: Engineering
         maxLength: 255
         type: string
       email:
-        description: |-
-          Email address of the user, must be a valid email format
-          required: true
-          maxLength: 255
-          format: email
-          example: john.doe@example.com
+        description: "Email address\n\t@maxLength\t255\n\t@format\t\temail\n\t@example\tjohn.doe@example.com"
+        example: john.doe@example.com
+        format: email
         maxLength: 255
         type: string
       firstName:
-        description: |-
-          The first name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: John
+        description: "First name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tJohn"
+        example: John
         maxLength: 255
         minLength: 1
         type: string
       lastName:
-        description: |-
-          The last name of the user, must be provided, minimum 1 character, can have spaces
-          required: true
-          minLength: 1
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: Doe
+        description: "Last name\n\t@minLength\t1\n\t@maxLength\t255\n\t@pattern\t^[\\p{L}\\p{N}]+$\n\t@example\tDoe"
+        example: Doe
         maxLength: 255
         minLength: 1
         type: string
       userName:
-        description: |-
-          The username for the user, must be provided, minimum 4 alphanumeric characters
-          required: true
-          minLength: 4
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9]+$
-          example: johndoe
+        description: "The username\n\t@minLength\t4\n\t@maxLength\t255\n\t@pattern\t^[a-zA-Z0-9]+$\n\t@example\tjohndoe"
+        example: johndoe
         maxLength: 255
         minLength: 4
         type: string
       userStatus:
         allOf:
-        - $ref: '#/definitions/user-management_internal_models.UserStatus'
-        description: |-
-          Status of the user (A=Active, I=Inactive, T=Terminated)
-          required: true
-          enum: A,I,T
-          example: A
+        - $ref: '#/definitions/UserStatus'
+        description: "User Status\n\t@enum\t\tA,I,T\n\t@example\tA"
         enum:
         - A
         - I
         - T
+        example: A
     required:
     - email
     - firstName
@@ -245,7 +181,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/user-management_internal_models.User'
+              $ref: '#/definitions/User'
             type: array
       summary: List all users
     post:
@@ -258,14 +194,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/user-management_internal_models.UserCreateRequest'
+          $ref: '#/definitions/UserCreateRequest'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/user-management_internal_models.User'
+            $ref: '#/definitions/User'
         "400":
           description: Bad Request
           schema:
@@ -318,7 +254,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user-management_internal_models.User'
+            $ref: '#/definitions/User'
         "404":
           description: Not Found
           schema:
@@ -341,14 +277,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/user-management_internal_models.UserUpdateRequest'
+          $ref: '#/definitions/UserUpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user-management_internal_models.User'
+            $ref: '#/definitions/User'
         "400":
           description: Bad Request
           schema:

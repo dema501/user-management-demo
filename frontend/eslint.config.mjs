@@ -34,6 +34,8 @@ export default defineConfig([
       semi: ["error", "always"],
       "comma-dangle": ["error", "always-multiline"],
       "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-empty-object-type": "off",
     },
   },
   {

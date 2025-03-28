@@ -13,7 +13,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --browsers Firefox",
     "test:ci": "ng test --no-watch --browsers=FirefoxHeadless --code-coverage",
-    "check:license": "npx --yes license-checker-rseidelsohn --relativeModulePath --relativeLicensePath --onlyAllow 'MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;BlueOak-1.0.0;Python-2.0;0BSD;MPL-2.0;Unlicense;UNLICENSED;CC-BY-3.0;CC-BY-4.0;CC0-1.0'"
+    "check:license": "npx --yes license-checker-rseidelsohn --relativeModulePath --relativeLicensePath --onlyAllow 'MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;BlueOak-1.0.0;Python-2.0;0BSD;MPL-2.0;Unlicense;UNLICENSED;CC-BY-3.0;CC-BY-4.0;CC0-1.0'",
+    "generate:schema": "ts-json-schema-generator -p src/app/models/**/*.ts -o src/app/models/schema.json"
   },
   "private": true,
   "type": "module",
@@ -57,6 +58,7 @@
     "stylelint-config-standard-scss": "^14.0.0",
     "stylelint-prettier": "^5.0.3",
     "stylelint-scss": "^6.11.1",
+    "ts-json-schema-generator": "^2.3.0",
     "typescript": "~5.7.2"
   }
 }

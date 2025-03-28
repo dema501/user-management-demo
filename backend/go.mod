@@ -20,7 +20,6 @@ require (
 	github.com/uptrace/bun/extra/bunslog v1.2.11
 	github.com/urfave/cli/v3 v3.0.0-beta1
 	go.uber.org/fx v1.23.0
-	golang.org/x/sync v0.12.0
 	golang.org/x/time v0.8.0
 )
 

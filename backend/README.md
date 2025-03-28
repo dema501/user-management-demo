@@ -209,7 +209,7 @@ or
 make generate-types
 ```
 
-it will generate the typings in `../frontend/src/app/models/user.model.tmp.ts`. Rename the file by removing '.tmp' extension and validate the generated types before committing changes to version control.
+it will generate the typings in `../frontend/src/app/models/user.model.ts`. Validate the generated types and run frontend unit tests with `yarn test` before committing changes to version control.
 
 ## Project Highlights
 

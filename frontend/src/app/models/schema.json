@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "User": {
+      "additionalProperties": false,
+      "description": "User represents a user in the system",
+      "properties": {
+        "createdAt": {
+          "type": "string"
+        },
+        "department": {
+          "description": "Department",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "id": {
+          "type": "number"
+        },
+        "lastName": {
+          "description": "Last name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "userName": {
+          "description": "The username",
+          "maxLength": 255,
+          "minLength": 4,
+          "pattern": "^[a-zA-Z0-9]+$",
+          "type": "string"
+        },
+        "userStatus": {
+          "$ref": "#/definitions/UserStatus",
+          "description": "User Status"
+        }
+      },
+      "required": [
+        "createdAt",
+        "department",
+        "email",
+        "firstName",
+        "id",
+        "lastName",
+        "updatedAt",
+        "userName",
+        "userStatus"
+      ],
+      "type": "object"
+    },
+    "UserCommon": {
+      "additionalProperties": false,
+      "description": "UserCommon defines common fields for a user",
+      "properties": {
+        "department": {
+          "description": "Department",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Last name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "userName": {
+          "description": "The username",
+          "maxLength": 255,
+          "minLength": 4,
+          "pattern": "^[a-zA-Z0-9]+$",
+          "type": "string"
+        },
+        "userStatus": {
+          "$ref": "#/definitions/UserStatus",
+          "description": "User Status"
+        }
+      },
+      "required": [
+        "userName",
+        "firstName",
+        "lastName",
+        "email",
+        "userStatus",
+        "department"
+      ],
+      "type": "object"
+    },
+    "UserCreateRequest": {
+      "additionalProperties": false,
+      "description": "UserCreateRequest is the request body for creating a user swagger:model UserCreateRequest",
+      "properties": {
+        "department": {
+          "description": "Department",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Last name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "userName": {
+          "description": "The username",
+          "maxLength": 255,
+          "minLength": 4,
+          "pattern": "^[a-zA-Z0-9]+$",
+          "type": "string"
+        },
+        "userStatus": {
+          "$ref": "#/definitions/UserStatus",
+          "description": "User Status"
+        }
+      },
+      "required": [
+        "userName",
+        "firstName",
+        "lastName",
+        "email",
+        "userStatus"
+      ],
+      "type": "object"
+    },
+    "UserStatus": {
+      "enum": [
+        "A",
+        "I",
+        "T"
+      ],
+      "type": "string"
+    },
+    "UserUpdateRequest": {
+      "additionalProperties": false,
+      "description": "UserUpdateRequest is the request body for updating a user swagger:model UserUpdateRequest",
+      "properties": {
+        "department": {
+          "description": "Department",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "format": "email",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "firstName": {
+          "description": "First name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Last name",
+          "maxLength": 255,
+          "minLength": 1,
+          "pattern": "^[\\p{L}\\p{N}]+$",
+          "type": "string"
+        },
+        "userName": {
+          "description": "The username",
+          "maxLength": 255,
+          "minLength": 4,
+          "pattern": "^[a-zA-Z0-9]+$",
+          "type": "string"
+        },
+        "userStatus": {
+          "$ref": "#/definitions/UserStatus",
+          "description": "User Status"
+        }
+      },
+      "required": [
+        "userName",
+        "firstName",
+        "lastName",
+        "email",
+        "userStatus"
+      ],
+      "type": "object"
+    }
+  }
+}
