@@ -1,7 +1,7 @@
 package models
 
 // UserStatus defines the status of a user
-type UserStatus string //@name UserStatus
+type UserStatus string // @name UserStatus
 
 const (
 	// UserStatusActive represents an active user

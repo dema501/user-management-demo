@@ -46,7 +46,7 @@ type UserCommon struct {
 	//	@maxLength	255
 	//	@example	Engineering
 	Department string `json:"department" validate:"omitempty,max=255,alphaNumUnicodeWithSpaces" bun:"department" example:"Engineering"`
-} //@name UserCommon
+} // @name UserCommon
 
 // User represents a user in the system
 type User struct {
@@ -58,7 +58,7 @@ type User struct {
 
 	CreatedAt time.Time `bun:"created_at,notnull,default:current_timestamp" json:"createdAt" format:"date-time" example:"2025-03-27T10:23:51.495798-05:00"`
 	UpdatedAt time.Time `bun:"updated_at,notnull,default:current_timestamp" json:"updatedAt" format:"date-time" example:"2025-03-27T10:23:51.495798-05:00"`
-} //@name User
+} // @name User
 
 // UserCreateRequest is the request body for creating a user
 // swagger:model UserCreateRequest
@@ -66,7 +66,7 @@ type User struct {
 //	@required	["userName", "firstName", "lastName", "email", "userStatus"]
 type UserCreateRequest struct {
 	UserCommon `tstype:",extends"`
-} //@name UserCreateRequest
+} // @name UserCreateRequest
 
 // UserUpdateRequest is the request body for updating a user
 // swagger:model UserUpdateRequest
@@ -74,4 +74,4 @@ type UserCreateRequest struct {
 //	@required	["userName", "firstName", "lastName", "email", "userStatus"]
 type UserUpdateRequest struct {
 	UserCommon `tstype:",extends"`
-} //@name UserUpdateRequest
+} // @name UserUpdateRequest
