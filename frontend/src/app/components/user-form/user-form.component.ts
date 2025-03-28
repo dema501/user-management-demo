@@ -4,6 +4,7 @@ import {
   FormsModule,
   FormBuilder,
   FormGroup,
+  ValidatorFn,
   Validators,
   ReactiveFormsModule,
 } from "@angular/forms";
@@ -35,6 +36,47 @@ interface DialogData {
   user?: User;
 }
 
+// for json schema validation
+import schema from "../../models/schema.json";
+
+interface SchemaProperty {
+  description?: string;
+  type?: string;
+  maxLength?: number;
+  minLength?: number;
+  pattern?: string;
+  format?: string;
+  $ref?: string;
+}
+
+interface RequestSchemaDefinition {
+  properties: {
+    [key: string]: SchemaProperty;
+  };
+  required: string[];
+}
+
+interface UserStatusSchema {
+  description?: string;
+  enum: UserStatus[];
+  type: string;
+}
+
+interface JsonSchema {
+  definitions: {
+    UserCreateRequest: RequestSchemaDefinition;
+    UserUpdateRequest: RequestSchemaDefinition;
+    UserStatus: UserStatusSchema;
+  };
+}
+
+// Add a ValidationMessages interface
+interface ValidationMessages {
+  [key: string]: {
+    [validationType: string]: string;
+  };
+}
+
 @Component({
   selector: "app-user-form",
   templateUrl: "./user-form.component.html",
@@ -59,6 +101,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   userForm!: FormGroup;
   isSubmitting = false;
   errorMessage = "";
+  validationMessages: ValidationMessages = {};
 
   userStatusOptions: { value: UserStatus; label: string }[] = [
     { value: "A", label: "Active" },
@@ -75,6 +118,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.generateValidationMessages();
     this.initForm();
   }
 
@@ -82,26 +126,109 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
+  // Generate validation messages from schema
+  private generateValidationMessages(): void {
+    const requestSchema = (schema as JsonSchema).definitions[
+      this.data.mode === "edit" ? "UserUpdateRequest" : "UserCreateRequest"
+    ] as RequestSchemaDefinition;
+    const requestProperties = requestSchema.properties;
+
+    const userStatusSchema = (schema as JsonSchema).definitions.UserStatus;
+
+    Object.entries(requestProperties).forEach(([fieldName, fieldSchema]) => {
+      this.validationMessages[fieldName] = {
+        required: `${fieldSchema.description || fieldName} is required`,
+        maxlength: `${fieldSchema.description || fieldName} cannot be longer than ${fieldSchema.maxLength} characters`,
+        minlength: `${fieldSchema.description || fieldName} must be at least ${fieldSchema.minLength} characters`,
+        pattern: `${fieldSchema.description || fieldName} format is invalid`,
+        email: "Please enter a valid email address",
+      };
+
+      // Add specific messages based on field
+      if (fieldSchema.$ref === "#/definitions/UserStatus") {
+        this.validationMessages[fieldName]["enum"] =
+          `Status must be one of: ${userStatusSchema.enum.join(", ")}`;
+      }
+    });
+  }
+
+  private getValidatorsFromSchema(fieldName: string): ValidatorFn[] {
+    const requestSchema = (schema as JsonSchema).definitions[
+      this.data.mode === "edit" ? "UserUpdateRequest" : "UserCreateRequest"
+    ] as RequestSchemaDefinition;
+    const requestProperties = requestSchema.properties;
+
+    const fieldSchema = requestProperties[fieldName];
+    const validators: ValidatorFn[] = [];
+
+    if (
+      (schema as JsonSchema).definitions[
+        this.data.mode === "edit" ? "UserUpdateRequest" : "UserCreateRequest"
+      ].required.includes(fieldName)
+    ) {
+      validators.push(Validators.required);
+    }
+
+    if (fieldSchema) {
+      if (fieldSchema.maxLength) {
+        validators.push(Validators.maxLength(fieldSchema.maxLength));
+      }
+
+      if (fieldSchema.minLength) {
+        validators.push(Validators.minLength(fieldSchema.minLength));
+      }
+
+      if (fieldSchema.pattern) {
+        try {
+          // Create RegExp with Unicode flag
+          const pattern = new RegExp(fieldSchema.pattern, "u");
+          validators.push(Validators.pattern(pattern));
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(`Invalid pattern for ${fieldName}:`, e);
+        }
+      }
+
+      if (fieldSchema.format === "email") {
+        validators.push(Validators.email);
+      }
+    }
+
+    return validators;
+  }
+
   initForm(): void {
     this.userForm = this.fb.group({
       userName: [
         this.data.user?.userName || "",
-        [Validators.required, Validators.maxLength(50)],
+        this.getValidatorsFromSchema("userName"),
       ],
-      firstName: [this.data.user?.firstName || "", [Validators.maxLength(255)]],
-      lastName: [this.data.user?.lastName || "", [Validators.maxLength(255)]],
+      firstName: [
+        this.data.user?.firstName || "",
+        this.getValidatorsFromSchema("firstName"),
+      ],
+      lastName: [
+        this.data.user?.lastName || "",
+        this.getValidatorsFromSchema("lastName"),
+      ],
+
       email: [
         this.data.user?.email || "",
-        [Validators.required, Validators.email],
+        this.getValidatorsFromSchema("email"),
       ],
-      userStatus: [this.data.user?.userStatus || "A", [Validators.required]],
+      userStatus: [
+        this.data.user?.userStatus || "A",
+        this.getValidatorsFromSchema("userStatus"),
+      ],
+
       department: [
         this.data.user?.department || "",
-        [Validators.maxLength(255)],
+        this.getValidatorsFromSchema("department"),
       ],
     });
 
     // Disable the userName control if in edit mode
+    // keep in mind that userName still needs to be sent to the server with UserUpdateRequest
     if (this.data.mode === "edit") {
       this.userForm.get("userName")?.disable();
     }
@@ -148,6 +275,17 @@ export class UserFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Helper method to get error message
+  getErrorMessage(fieldName: string): string {
+    const control = this.userForm.get(fieldName);
+    if (control && control.errors && this.validationMessages[fieldName]) {
+      const firstError = Object.keys(control.errors)[0];
+      return this.validationMessages[fieldName][firstError];
+    }
+    return "";
+  }
+
+  // Helper method to handle error
   handleError(error: unknown): void {
     this.isSubmitting = false;
 
