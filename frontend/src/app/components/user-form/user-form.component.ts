@@ -130,7 +130,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       });
       this.subscriptions.push(sub);
     } else if (this.data.mode === "edit" && this.data.user) {
-      const userRequest: UserUpdateRequest = this.userForm.value;
+      const userRequest: UserUpdateRequest = this.userForm.getRawValue();
       const sub = this.userService
         .updateUser(this.data.user.id, userRequest)
         .subscribe({
