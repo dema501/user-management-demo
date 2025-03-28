@@ -240,8 +240,7 @@ describe("UserFormComponent", () => {
       expect(userServiceSpy.updateUser).toHaveBeenCalledWith(
         1,
         jasmine.objectContaining({
-          // we don't want update userName from UI
-          // userName: "johndoe",
+          userName: "johndoe",
           firstName: "JohnUpdated",
           lastName: "DoeUpdated",
           email: "updated@example.com",
