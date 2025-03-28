@@ -65,12 +65,10 @@ export interface User extends UserCommon {
  * swagger:model UserCreateRequest
  * 	@required	["userName", "firstName", "lastName", "email", "userStatus"]
  */
-export interface UserCreateRequest extends UserCommon {
-} // @name UserCreateRequest
+export interface UserCreateRequest extends UserCommon {} // @name UserCreateRequest
 /**
  * UserUpdateRequest is the request body for updating a user
  * swagger:model UserUpdateRequest
  * 	@required	["userName", "firstName", "lastName", "email", "userStatus"]
  */
-export interface UserUpdateRequest extends UserCommon {
-} // @name UserUpdateRequest
+export interface UserUpdateRequest extends UserCommon {} // @name UserUpdateRequest
