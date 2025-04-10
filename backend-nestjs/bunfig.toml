@@ -1,0 +1,26 @@
+# Bun configuration file
+
+[run]
+# Default command if you just run `bun` in the directory (optional)
+default = "src/main.ts"
+
+# Specify environment variables for `bun run` commands
+env = { "NODE_ENV" = "development" }
+
+[test]
+# Preload scripts before running tests (e.g., setup files)
+preload = ["./test/setup.ts"]
+
+# Default timeout for tests in milliseconds (default: 5000)
+timeout = 10000
+
+# Set the log level for tests (default: "info")
+logLevel = "debug"
+
+# Optional: Define path aliases if not using tsconfig.json paths or needing overrides
+# [macros]
+# "~" = "./src" # Example alias
+
+# Optional: Define loader rules if needed for non-standard file types
+# [loader]
+# ".env" = "text"
