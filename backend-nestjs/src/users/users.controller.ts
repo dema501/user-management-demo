@@ -113,7 +113,8 @@ export class UsersController {
     const { id } = params;
 
     this.logger.log(`Received request to get user by ID: ${id}`);
-    // ID is validated by ParseIntPipe to be a number. Zod schema ensures positive int.
+    // ID is validated by ZodValidationPipe to be a number. Zod schema ensures positive int.
+    // this condition is for testing purposes only
     if (id <= 0) {
       throw new BadRequestException('User ID must be a positive integer.');
     }
@@ -158,6 +159,8 @@ export class UsersController {
     const { id } = params;
 
     this.logger.log(`Received request to update user ID: ${id}`);
+    // ID is validated by ZodValidationPipe to be a number. Zod schema ensures positive int.
+    // this condition is for testing purposes only
     if (id <= 0) {
       throw new BadRequestException('User ID must be a positive integer.');
     }
@@ -195,11 +198,8 @@ export class UsersController {
     @Param(new ZodValidationPipe(UserIdParamSchema)) params: UserIdParam,
   ): Promise<void> {
     const { id } = params;
-
-    // this.logger.log;
-    console.log(
-      `!!!!!!!!!!!!!!!!!!!!Received request to delete user ID: ${id}`,
-    );
+    // ID is validated by ZodValidationPipe to be a number. Zod schema ensures positive int.
+    // this condition is for testing purposes only
     if (id <= 0) {
       throw new BadRequestException('User ID must be a positive integer.');
     }

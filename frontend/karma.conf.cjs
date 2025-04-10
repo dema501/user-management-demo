@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 module.exports = function (config) {
   config.set({
     basePath: "",
