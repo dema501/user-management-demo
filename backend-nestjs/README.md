@@ -2,97 +2,212 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# User Management System - Backend (NestJS)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Overview
 
-## Description
+This is the NestJS backend for a web application designed for managing users. The system provides basic CRUD (Create, Read, Update, Delete) operations for user management via a REST API, built using the NestJS framework and leveraging modern libraries like Drizzle ORM and Zod for validation.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requirements
 
-## Project setup
+### Backend
+- Node.js (LTS recommended, check `package.json` for specific engine requirements if available)
+- Bun (Used as package manager and runner)
+- PostgreSQL database
+- Docker (optional, for containerized deployment)
 
-```bash
-$ bun install
+### Libraries and Frameworks
+- **Web Framework**: [NestJS](https://nestjs.com/) - A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
+- **Database ORM**: [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM that focuses on type safety and developer experience.
+- **Validation**: [Zod](https://zod.dev/) - TypeScript-first schema declaration and validation library.
+- **Configuration**: [@nestjs/config](https://docs.nestjs.com/techniques/configuration) - Configuration module for NestJS applications.
+- **API Documentation**: [@nestjs/swagger](https://docs.nestjs.com/openapi/introduction) - Integrates Swagger UI for API documentation.
+- **Testing**: [Bun Test](https://bun.sh/docs/test/writing) - Built-in testing framework used in this project.
+
+## Project Structure
+
+The project follows a standard NestJS modular structure:
+
+```
+user-management/
+├── backend-nestjs/
+│   ├── src/
+│   │   ├── app.controller.ts     # Root controller (e.g., for redirects)
+│   │   ├── app.module.ts         # Root application module
+│   │   ├── main.ts               # Application entry point
+│   │   ├── common/               # Common utilities (e.g., pipes, interceptors)
+│   │   │   └── pipes/
+│   │   │       └── zod-validation.pipe.ts # Zod validation pipe
+│   │   ├── database/             # Database connection, schema, migrations
+│   │   │   ├── drizzle.provider.ts # Drizzle ORM provider setup
+│   │   │   ├── database.module.ts  # Database module
+│   │   │   ├── schema.ts           # Drizzle ORM schema definition
+│   │   │   └── migrations/         # Drizzle Kit migrations
+│   │   ├── health/               # Health check endpoint module
+│   │   │   ├── health.controller.ts
+│   │   │   └── health.module.ts
+│   │   └── users/                # User feature module
+│   │       ├── dto/                # Data Transfer Objects (Validated by Zod, used by Swagger)
+│   │       ├── schemas/            # Zod schemas for validation and type inference
+│   │       ├── users.controller.ts # API request handlers (Controller)
+│   │       ├── users.module.ts     # Feature module definition
+│   │       └── users.service.ts    # Business logic (Service)
+│   ├── test/                     # End-to-end tests
+│   ├── .env.example              # Example environment variables
+│   ├── .eslintrc.js              # ESLint configuration
+│   ├── bun.lockb                 # Bun lock file
+│   ├── Dockerfile                # (Optional) Dockerfile for containerization
+│   ├── drizzle.config.ts         # Drizzle Kit configuration
+│   ├── nest-cli.json             # NestJS CLI configuration
+│   ├── package.json              # Project dependencies and scripts
+│   ├── README.md                 # This file
+│   └── tsconfig.json             # TypeScript configuration
 ```
 
-## Compile and run the project
+## API Features
+
+The API provides the following endpoints under the `/api/v1` prefix:
+
+- `GET /users` - List all users
+- `GET /users/{id}` - Get a specific user by ID
+- `POST /users` - Create a new user (with Zod validation)
+- `PUT /users/{id}` - Update an existing user (with Zod validation)
+- `DELETE /users/{id}` - Delete a user
+- `GET /status` - Get API status and basic health info (DB connection, memory, uptime)
+
+API documentation is available through Swagger UI at `/api/v1/docs`.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (check `package.json` engines or use LTS)
+- Bun (`npm install -g bun`)
+- PostgreSQL database
+- Docker (optional)
+
+### Setting Up the Database
+
+1.  **Configure Environment Variables:**
+    Copy `.env.example` to `.env` (or `.env.development`, `.env.production`) and fill in your PostgreSQL connection string:
+    ```bash
+    # .env
+    DSN="postgresql://username:password@localhost:5432/database_name?sslmode=disable"
+    # Other variables like PORT, NODE_ENV might also be needed
+    ```
+    *Note: The application uses `@nestjs/config` which loads `.env.{NODE_ENV}` and falls back to `.env`.*
+
+2.  **Run Database Migrations:**
+    Use Drizzle Kit to apply the database schema migrations:
+    ```bash
+    bun run migrate
+    ```
+
+### Running the API Server
 
 ```bash
-# development
-$ bun run start
+# Install dependencies
+bun install
 
-# watch mode
-$ bun run start:dev
+# Development mode with hot reload (uses .env.development or .env)
+bun run start:dev
 
-# production mode
-$ bun run start:prod
+# Production mode (uses .env.production or .env)
+# Build step might be required first depending on setup
+bun run build # (if needed)
+bun run start:prod
 ```
 
-## Run tests
+The API will typically be available at `http://localhost:3000` (or the `PORT` specified in your `.env` file). The base path for the API is `/api/v1`.
+
+### Building Docker Image (If Dockerfile is present)
 
 ```bash
-# unit tests
-$ bun run test
-
-# e2e tests
-$ bun run test:e2e
-
-# test coverage
-$ bun run test:cov
+docker build -t user-management-nestjs:latest .
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### Running with Docker (If Dockerfile is present)
 
 ```bash
-$ bun install -g mau
-$ mau deploy
+# Make sure to replace placeholders with your actual DB details
+# Use host.docker.internal for localhost access from container on Docker Desktop
+docker run -p 3000:3000 \
+  -e DSN="postgresql://username:password@host.docker.internal:5432/database_name?sslmode=disable" \
+  -e NODE_ENV="production" \
+  user-management-nestjs:latest
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Development
 
-## Resources
+### Available Bun Scripts (Check `package.json`)
 
-Check out a few resources that may come in handy when working with NestJS:
+Common scripts usually include:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```bash
+# Run in development mode with watch
+bun run start:dev
 
-## Support
+# Build for production
+bun run build
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# Run in production mode (after build)
+bun run start:prod
 
-## Stay in touch
+# Run linters
+bun run lint
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Run formatters (e.g., Prettier)
+bun run format
+
+# Run database migrations
+bun run migrate
+
+# Generate new database migration
+bun run migrate:generate MIGRATION_NAME
+
+# Run unit tests (using bun:test)
+bun run test
+
+# Run end-to-end tests
+bun run test:e2e
+
+# Run tests with coverage
+bun run test:cov
+```
+
+### Testing
+
+Run the tests using Bun's built-in test runner:
+
+```bash
+# Run unit tests (files matching *.spec.ts)
+bun run test
+
+# Run end-to-end tests (files matching *.e2e-spec.ts)
+bun run test:e2e
+```
+
+## API Documentation
+
+Swagger documentation is automatically generated based on decorators in the controllers and DTOs. Access it at `/api/v1/docs` when the server is running.
+
+No manual generation step (`make swagger`) is typically needed, as it's integrated into the NestJS application lifecycle.
+
+## Project Highlights
+
+- **Clean Architecture**: Leverages NestJS modules, controllers, and services for separation of concerns.
+- **Type Safety**: End-to-end type safety with TypeScript, Drizzle ORM, and Zod.
+- **Validation**: Robust request validation using Zod schemas integrated via a custom NestJS pipe.
+- **Database Management**: SQL migrations managed by Drizzle Kit.
+- **Configuration**: Environment-aware configuration using `@nestjs/config` with Zod validation for environment variables.
+- **Error Handling**: Consistent error responses using NestJS built-in exception filters and custom exceptions.
+- **Logging**: Structured logging using `@nestjs/common` Logger.
+- **API Documentation**: Automatic Swagger UI generation via `@nestjs/swagger`.
+- **Health Check**: Simple `/status` endpoint for monitoring basic application health.
+- **Testing**: Unit and E2E tests using `bun:test`.
+- **Docker Support**: Ready for containerization (requires `Dockerfile`).
+- **Graceful Shutdown**: Properly handles shutdown signals via NestJS `enableShutdownHooks`.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is MIT licensed.
