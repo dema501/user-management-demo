@@ -1,0 +1,45 @@
+# Rust target directory
+/target
+
+# Rust temporary files
+**/*.rs.bk
+
+# Cargo lock file
+Cargo.lock
+
+
+# Editor directories and files
+.idea/
+.vscode/
+*.iml
+*.code-workspace
+.DS_Store
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+/build/
+
+# Logs
+*.log
+
+# OS generated files
+ehthumbs.db
+Thumbs.db
+
+# Test results
+/coverage/
+/prof/
+
+# sqlx offline data (often committed, but can be ignored if generated in CI)
+# sqlx-data.json
+.sqlx/
+
+# Terraform state
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
