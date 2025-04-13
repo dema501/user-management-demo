@@ -187,7 +187,7 @@ fn is_unique_constraint_violation(err: &SqlxError) -> bool {
     if let SqlxError::Database(db_err) = err {
         // Postgres unique violation code is "23505"
         // Use the trait method `code()` which returns Option<&str>
-        if db_err.code().map_or(false, |code| code == "23505") {
+        if db_err.code().is_some_and(|code| code == "23505") {
             return true;
         }
     }

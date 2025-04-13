@@ -108,7 +108,7 @@ impl UserRepository {
             // Check if the error is a unique constraint violation
             if let SqlxError::Database(db_err) = &e {
                 // Postgres unique violation code is "23505"
-                if db_err.code().map_or(false, |code| code == "23505") {
+                if db_err.code().is_some_and(|code| code == "23505") {
                      tracing::warn!(user_name, email, constraint = ?db_err.constraint(), "Repository: Unique constraint violation during create");
                      // Let the service layer return AppError::Conflict based on this
                      return AppError::Database(e); // Return the original DB error for service to interpret
@@ -123,6 +123,7 @@ impl UserRepository {
     /// Assumes data validation and conflict checks are performed *before* calling.
     /// Returns the updated User.
     /// Returns `AppError::NotFound` if no user with the ID exists to update.
+    #[allow(clippy::too_many_arguments)]
     pub async fn update(
         &self,
         id: i64,
@@ -157,7 +158,7 @@ impl UserRepository {
         .map_err(|e| {
              // Check for unique constraint violation during update
              if let SqlxError::Database(db_err) = &e {
-                 if db_err.code().map_or(false, |code| code == "23505") {
+                 if db_err.code().is_some_and(|code| code == "23505") {
                       tracing::warn!(user_id = id, user_name, email, constraint = ?db_err.constraint(), "Repository: Unique constraint violation during update");
                       return AppError::Database(e); // Return original DB error
                  }

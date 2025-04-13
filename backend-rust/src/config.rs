@@ -2,7 +2,6 @@ use clap::Parser;
 use config::{ConfigError, Environment, File};
 use serde::Deserialize;
 use std::path::PathBuf;
-use tracing;
 
 // Combined Config struct using Clap for CLI/Env and Serde for file loading
 #[derive(Debug, Clone, Deserialize, Parser)]
