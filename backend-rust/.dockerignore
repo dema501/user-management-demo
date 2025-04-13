@@ -1,0 +1,39 @@
+# Rust build artifacts
+target/
+**/target/
+.sqlx/
+
+# Git stuff
+.git/
+.gitignore
+.gitattributes
+
+# Docker stuff
+Dockerfile*
+docker-compose*
+
+# Config/Secrets
+.env*
+!.env.example
+Settings.*.toml
+!Settings.toml # If you have a base config
+
+# Logs and temp files
+**/*.log
+.tmp/
+
+# Documentation / Misc
+*.md
+*.yaml
+.*
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Test data (if large)
+# tests/data/
+
+# E2E cache (if any)
+# e2e/cache/
