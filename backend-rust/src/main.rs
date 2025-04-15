@@ -1,4 +1,5 @@
 use actix_web::{web, App, HttpResponse, HttpServer};
+use std::env;
 use std::sync::Arc;
 use time::OffsetDateTime;
 use tokio::signal;
@@ -21,8 +22,6 @@ use crate::repository::user_repository::UserRepository;
 use crate::service::user_service::UserService;
 // Import state struct
 
-const APP_NAME: &str = "user-management-api";
-
 #[actix_web::main]
 async fn main() -> anyhow::Result<()> {
     let start_time = OffsetDateTime::now_utc();
@@ -35,8 +34,11 @@ async fn main() -> anyhow::Result<()> {
         e
     })?;
 
+    let pkg_name = env::var("CARGO_PKG_NAME").expect("CARGO_PKG_NAME env var is not set");
+    let pkg_version = env::var("CARGO_PKG_VERSION").expect("CARGO_PKG_VERSION env var is not set");
+
     // Configure Logging
-    init_global_subscriber(APP_NAME, config.verbose);
+    init_global_subscriber(&pkg_name, config.verbose);
     tracing::info!(config = ?config, "Configuration loaded");
 
     // Create Database Pool
@@ -68,9 +70,7 @@ async fn main() -> anyhow::Result<()> {
             .app_data(start_time_data.clone()) // Share start time
             // Add tracing middleware (structured logging per request)
             .wrap(tracing_actix_web::TracingLogger::default())
-            // Add standard Actix logger middleware (simple text logging per request) - choose one or the other
-            // .wrap(Logger::default())
-            // Add other middleware (CORS, Recovery, etc.)
+            // Add other middleware
             .wrap(actix_web::middleware::Compress::default())
             .wrap(actix_web::middleware::NormalizePath::trim())
             .wrap(
@@ -80,9 +80,10 @@ async fn main() -> anyhow::Result<()> {
                     .allow_any_header()
                     .max_age(3600),
             )
-            .wrap(actix_web::middleware::DefaultHeaders::new().add(("X-Version", "1.0")))
-            // Error handlers (optional, default ResponseError impl works)
-            // .app_data(web::JsonConfig::default().error_handler(|err, _req| { ... }))
+            .wrap(
+                actix_web::middleware::DefaultHeaders::new()
+                    .add(("X-Version", format!("{}-{}", pkg_name, pkg_version))),
+            )
             // Configure API routes (users, health, etc.)
             .configure(api::configure_api)
             // Default route for 404
