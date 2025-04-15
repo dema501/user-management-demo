@@ -3,7 +3,8 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{ConnectOptions, Pool, Postgres};
 use std::str::FromStr;
 use std::time::Duration;
-use tracing::log::LevelFilter; // Use tracing's LevelFilter for SQLx logging
+use tracing::log::LevelFilter;
+
 
 /// Creates and configures a PostgreSQL connection pool.
 ///
@@ -90,11 +91,11 @@ pub fn mask_dsn_password(dsn: &str) -> String {
     }
 
     match url::Url::parse(&url_with_scheme) {
-        Ok(mut url) => {
-            if url.password().is_some() {
-                let _ = url.set_password(Some("*****"));
+        Ok(mut url_parsed) => {
+            if url_parsed.password().is_some() {
+                let _ = url_parsed.set_password(Some("*****"));
             }
-            url.to_string()
+            url_parsed.to_string()
         }
         Err(_) => {
             // Fallback for invalid URLs: Try basic string splitting

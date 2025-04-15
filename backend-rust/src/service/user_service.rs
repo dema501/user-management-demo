@@ -38,27 +38,21 @@ impl UserService {
 
         // 2. Extract validated data (safe to unwrap options due to `required` validation rule)
         let data = req.data;
-        let user_name = data.user_name.expect("Username validated but is None"); // Should not happen if validation passed
-        let email = data.email.expect("Email validated but is None");
-        let first_name = data.first_name.expect("First name validated but is None");
-        let last_name = data.last_name.expect("Last name validated but is None");
-        let user_status = data.user_status.expect("User status validated but is None");
-        let department = data.department; // Optional field, remains Option<String>
 
         // 3. Check for conflicts (username/email already exist)
-        if self.user_repo.exists_by_user_name(&user_name).await? {
-            tracing::warn!(user_name, "Service: Username conflict during creation");
+        if self.user_repo.exists_by_user_name(&data.user_name).await? {
+            tracing::warn!(data.user_name, "Service: Username conflict during creation");
             return Err(AppError::Conflict(format!(
                 "Username '{}' already exists",
-                user_name
+                data.user_name
             )));
         }
         // Use exclude_id = 0 for create check
-        if self.user_repo.exists_by_email(&email, 0).await? {
-            tracing::warn!(email, "Service: Email conflict during creation");
+        if self.user_repo.exists_by_email(&data.email, 0).await? {
+            tracing::warn!(data.email, "Service: Email conflict during creation");
             return Err(AppError::Conflict(format!(
                 "Email '{}' already exists",
-                email
+                data.email
             )));
         }
         tracing::debug!("Service: No username/email conflicts found");
@@ -68,19 +62,19 @@ impl UserService {
         let created_user = self
             .user_repo
             .create(
-                &user_name,
-                &first_name,
-                &last_name,
-                &email,
-                &user_status,
-                department.as_deref(), // Get Option<&str> from Option<String>
+                &data.user_name,
+                &data.first_name,
+                &data.last_name,
+                &data.email,
+                &data.user_status,
+                data.department.as_deref(), // Get Option<&str> from Option<String>
             )
             .await?; // Propagate potential DB errors from repo
 
         tracing::info!(
             user_id = created_user.id,
-            user_name,
-            email,
+            user_name = created_user.user_name,
+            email = created_user.email,
             "Service: User created successfully"
         );
         Ok(created_user)
@@ -95,12 +89,6 @@ impl UserService {
 
         // 2. Extract validated data
         let data = req.data;
-        let user_name = data.user_name.expect("Username validated but is None");
-        let email = data.email.expect("Email validated but is None");
-        let first_name = data.first_name.expect("First name validated but is None");
-        let last_name = data.last_name.expect("Last name validated but is None");
-        let user_status = data.user_status.expect("User status validated but is None");
-        let department = data.department;
 
         // 3. Check if user exists (implicitly done by get_by_id or update returning NotFound)
         // We might need the current user's data to compare username/email for conflict checks.
@@ -109,19 +97,19 @@ impl UserService {
 
         // Check username conflict (if changed and new one exists for *another* user)
         // Check email conflict (if changed and new one exists for *another* user)
-        if self.user_repo.exists_by_user_name(&user_name).await? {
+        if self.user_repo.exists_by_user_name(&data.user_name).await? {
             // If the username exists, ensure it belongs to the *current* user being updated
             match self.user_repo.get_by_id(id).await {
                 Ok(current_user) => {
-                    if current_user.user_name != user_name {
+                    if current_user.user_name != data.user_name {
                         tracing::warn!(
                             user_id = id,
-                            user_name,
+                            data.user_name,
                             "Service: Username conflict during update"
                         );
                         return Err(AppError::Conflict(format!(
                             "Username '{}' is already taken by another user",
-                            user_name
+                            data.user_name
                         )));
                     }
                     // Username exists but belongs to the user being updated, which is fine.
@@ -139,11 +127,15 @@ impl UserService {
         }
 
         // Use exclude_id = id for email check during update
-        if self.user_repo.exists_by_email(&email, id).await? {
-            tracing::warn!(user_id = id, email, "Service: Email conflict during update");
+        if self.user_repo.exists_by_email(&data.email, id).await? {
+            tracing::warn!(
+                user_id = id,
+                data.email,
+                "Service: Email conflict during update"
+            );
             return Err(AppError::Conflict(format!(
                 "Email '{}' is already taken by another user",
-                email
+                data.email
             )));
         }
         tracing::debug!("Service: No username/email conflicts found for update");
@@ -153,19 +145,19 @@ impl UserService {
             .user_repo
             .update(
                 id,
-                &user_name,
-                &first_name,
-                &last_name,
-                &email,
-                &user_status,
-                department.as_deref(),
+                &data.user_name,
+                &data.first_name,
+                &data.last_name,
+                &data.email,
+                &data.user_status,
+                data.department.as_deref(),
             )
             .await?; // Propagates NotFound or other DB errors from repo
 
         tracing::info!(
             user_id = updated_user.id,
-            user_name,
-            email,
+            user_name = updated_user.user_name,
+            email = updated_user.email,
             "Service: User updated successfully"
         );
         Ok(updated_user)
@@ -186,10 +178,11 @@ impl UserService {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database; // Need create_pool for real repo tests
-    use crate::domain::models::{UserCreateRequestData, UserUpdateRequestData};
-    use crate::repository::user_repository::UserRepository; // Need concrete repo or mock trait
     use sqlx::PgPool;
+
+    use crate::database;
+    use crate::domain::models::{UserCreateRequestData, UserUpdateRequestData};
+    use crate::repository::user_repository::UserRepository;
 
     // --- Test Setup ---
     // Using a real repository connected to a test DB.
@@ -220,11 +213,11 @@ mod tests {
     fn create_user_request(username: &str, email: &str, status: &str) -> UserCreateRequest {
         UserCreateRequest {
             data: UserCreateRequestData {
-                user_name: Some(username.to_string()),
-                first_name: Some("Service".to_string()),
-                last_name: Some("Test".to_string()),
-                email: Some(email.to_string()),
-                user_status: Some(status.to_string()),
+                user_name: username.to_string(),
+                first_name: "Service".to_string(),
+                last_name: "Test".to_string(),
+                email: email.to_string(),
+                user_status: status.to_string(),
                 department: None,
             },
         }
@@ -233,11 +226,11 @@ mod tests {
     fn update_user_request(username: &str, email: &str, status: &str) -> UserUpdateRequest {
         UserUpdateRequest {
             data: UserUpdateRequestData {
-                user_name: Some(username.to_string()),
-                first_name: Some("ServiceUpdate".to_string()),
-                last_name: Some("TestUpdate".to_string()),
-                email: Some(email.to_string()),
-                user_status: Some(status.to_string()),
+                user_name: username.to_string(),
+                first_name: "ServiceUpdate".to_string(),
+                last_name: "TestUpdate".to_string(),
+                email: email.to_string(),
+                user_status: status.to_string(),
                 department: Some("Updated".to_string()),
             },
         }
@@ -471,7 +464,7 @@ mod tests {
 
         // Update request with the SAME username and email, just changing status
         let mut update_req = update_user_request("selfupdate", "self@e.com", "I");
-        update_req.data.first_name = Some("SelfUpdated".to_string()); // Change something else
+        update_req.data.first_name = "SelfUpdated".to_string(); // Change something else
 
         let result = service.update_user(user.id, update_req).await;
         assert!(

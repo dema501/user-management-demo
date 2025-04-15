@@ -2,7 +2,7 @@ use sqlx::{types::time::OffsetDateTime, Error as SqlxError, PgPool};
 use std::sync::Arc;
 
 use crate::domain::models::User;
-use crate::error::{AppError, AppResult}; // Use AppResult
+use crate::error::{AppError, AppResult};
 
 // --- UserRepository Implementation ---
 
@@ -246,7 +246,7 @@ impl UserRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::database; // For create_pool
+    use crate::database;
     use sqlx::PgPool;
     use std::sync::Arc;
 

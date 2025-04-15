@@ -3,7 +3,7 @@ use sqlx::PgPool;
 use time::OffsetDateTime;
 
 use crate::domain::models::HealthStatus;
-use crate::error::AppResult; // Using AppResult allows consistent error handling via ResponseError
+use crate::error::AppResult;
 
 // State to hold server start time
 #[derive(Clone)]
