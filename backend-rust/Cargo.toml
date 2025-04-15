@@ -15,13 +15,13 @@ strip = "symbols"
 
 [dependencies]
 # Web & Async
-actix-web = "4.8.0"
+actix-web = "4.10.0"
+# Use the latest compatible version
 actix-cors = "0.7.0"
-tokio = { version = "1.38.0", features = ["full"] }
-futures = "0.3.30"
+tokio = { version = "1.44.0", features = ["full"] }
 
 # Database
-sqlx = { version = "0.7.4", features = [
+sqlx = { version = "0.8.3", features = [
     "runtime-tokio-rustls", # Or native-tls based on system setup
     "postgres",
     "macros",
@@ -30,47 +30,44 @@ sqlx = { version = "0.7.4", features = [
 ] }
 
 # Serialization / Deserialization
-serde = { version = "1.0.204", features = ["derive"] }
-serde_json = "1.0.121"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
 
 # Configuration
-config = { version = "0.14.0", features = [
+config = { version = "0.15.11", features = [
     "toml",
 ] } # Removed yaml if only using toml
 dotenvy = "0.15.7"
-clap = { version = "4.5.11", features = ["derive", "env"] }
+clap = { version = "4.5.35", features = ["derive", "env"] }
 
 # Validation
-validator = { version = "0.18.1", features = ["derive"] }
-# regex = "1.10.5" # Keep if needed for custom validation
-# once_cell = "1.19.0" # Keep if needed for lazy statics (e.g., regex)
+validator = { version = "0.20.0", features = ["derive"] }
+regex = "1.11.1"
+lazy_static = "1.5"
 
 # Logging
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.18", features = [
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = [
     "fmt",
     "env-filter",
     "json",
     "time",
 ] }
-tracing-bunyan-formatter = "0.3.9"
-tracing-actix-web = "0.7.11"
+tracing-actix-web = "0.7.18"
 
 # Error Handling
-thiserror = "1.0.63"
-anyhow = "1.0.86"
+thiserror = "2.0.12"
+anyhow = "1.0.98"
 
 # Utilities
-time = { version = "0.3.36", features = [
+time = { version = "0.3.41", features = [
     "serde",
     "macros",
     "formatting",
     "parsing",
 ] } # Added formatting/parsing
-url = "2.5.2" # For DSN parsing/masking
+url = "2.5.4" # For DSN parsing/masking
 num_cpus = "1.16.0" # For default worker count
-regex = "1.11.1"
-once_cell = "1.21.3"
 
 
 [dev-dependencies]
@@ -79,7 +76,3 @@ reqwest = { version = "0.12.5", features = ["json"] }
 tempfile = "3.19.1"
 tracing-appender = "0.2.3"
 tracing-test = "0.2.5"
-# Add if repository tests need serial execution due to DB state
-# serial_test = "3.1.1"
-# Add for mocking if needed
-# mockall = "0.12.1"

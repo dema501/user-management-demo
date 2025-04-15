@@ -18,7 +18,8 @@ use crate::config::load_config;
 use crate::database::create_pool;
 use crate::logging::init_global_subscriber;
 use crate::repository::user_repository::UserRepository;
-use crate::service::user_service::UserService; // Import state struct
+use crate::service::user_service::UserService;
+// Import state struct
 
 const APP_NAME: &str = "user-management-api";
 

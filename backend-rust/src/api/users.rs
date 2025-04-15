@@ -1,8 +1,11 @@
-use actix_web::{web, HttpResponse, Responder, Scope};
 // Import the specific request/response types needed
-use crate::domain::models::{UserCreateRequest, UserUpdateRequest}; // Added User
-use crate::error::AppResult;
-use crate::service::user_service::UserService; // Import the concrete service
+use crate::domain::models::{UserCreateRequest, UserUpdateRequest};
+use actix_web::{web, HttpResponse, Responder, Scope};
+use validator::Validate;
+// Added User
+use crate::error::{AppError, AppResult};
+use crate::service::user_service::UserService;
+// Import the concrete service
 
 // --- Handlers ---
 
@@ -38,18 +41,26 @@ async fn create_user(
     req: web::Json<UserCreateRequest>,
 ) -> AppResult<impl Responder> {
     let create_request = req.into_inner();
-    // Log relevant parts of the request, avoid logging sensitive info if any
-    tracing::info!(user_name = ?create_request.data.user_name, email = ?create_request.data.email, "Handler: Received request to create user");
+    match create_request.validate() {
+        Ok(_) => {
+            // Log relevant parts of the request, avoid logging sensitive info if any
+            tracing::info!(user_name = ?create_request.data.user_name, email = ?create_request.data.email, "Handler: Received request to create user");
 
-    // Service layer handles validation and creation logic
-    let created_user = user_service.create_user(create_request).await?; // This can return Validation or Conflict errors
+            // Service layer handles validation and creation logic
+            let created_user = user_service.create_user(create_request).await?; // This can return Validation or Conflict errors
 
-    tracing::info!(
-        user_id = created_user.id,
-        "Handler: User created successfully"
-    );
-    // Return 201 Created status code with the created user object
-    Ok(HttpResponse::Created().json(created_user))
+            tracing::info!(
+                user_id = created_user.id,
+                "Handler: User created successfully"
+            );
+            // Return 201 Created status code with the created user object
+            Ok(HttpResponse::Created().json(created_user))
+        }
+        Err(errors) => {
+            tracing::warn!("Handler: Invalid user data");
+            Err(AppError::Validation(errors))
+        }
+    }
 }
 
 /// Update an existing user by their ID.
@@ -60,16 +71,25 @@ async fn update_user(
 ) -> AppResult<impl Responder> {
     let user_id = path.into_inner();
     let update_request = req.into_inner();
-    tracing::info!(user_id = user_id, user_name = ?update_request.data.user_name, email = ?update_request.data.email, "Handler: Received request to update user");
 
-    // Service layer handles validation, existence check, and update logic
-    let updated_user = user_service.update_user(user_id, update_request).await?;
+    match update_request.validate() {
+        Ok(_) => {
+            tracing::info!(user_id = user_id, user_name = ?update_request.data.user_name, email = ?update_request.data.email, "Handler: Received request to update user");
 
-    tracing::info!(
-        user_id = updated_user.id,
-        "Handler: User updated successfully"
-    );
-    Ok(HttpResponse::Ok().json(updated_user))
+            // Service layer handles validation, existence check, and update logic
+            let updated_user = user_service.update_user(user_id, update_request).await?;
+
+            tracing::info!(
+                user_id = updated_user.id,
+                "Handler: User updated successfully"
+            );
+            Ok(HttpResponse::Ok().json(updated_user))
+        }
+        Err(errors) => {
+            tracing::warn!("Handler: Invalid user data");
+            Err(AppError::Validation(errors))
+        }
+    }
 }
 
 /// Delete a user by their unique ID.

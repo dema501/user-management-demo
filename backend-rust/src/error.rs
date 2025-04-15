@@ -1,8 +1,9 @@
 use actix_web::{http::StatusCode, HttpResponse, ResponseError};
-use serde::{Deserialize, Serialize}; // Added Deserialize
+use serde::{Deserialize, Serialize};
+// Added Deserialize
 use sqlx::Error as SqlxError;
 use std::fmt::{Debug, Formatter};
-// Removed validator imports
+use validator::ValidationErrors;
 
 // --- Custom Error Enum ---
 
@@ -14,8 +15,9 @@ pub enum AppError {
     Database(#[from] SqlxError),
 
     // Validation variant removed
-    // #[error("Validation error(s)")]
-    // Validation(#[from] ValidationErrors),
+    #[error("Validation error(s)")]
+    Validation(#[from] ValidationErrors),
+
     /// Configuration loading or parsing errors.
     #[error("Configuration error")]
     Config(#[from] config::ConfigError),
@@ -61,6 +63,7 @@ impl Debug for AppError {
             AppError::Internal(msg) => write!(f, "AppError::Internal({})", msg),
             AppError::Io(err) => write!(f, "AppError::Io({:?})", err),
             AppError::Anyhow(err) => write!(f, "AppError::Anyhow({:?})", err),
+            AppError::Validation(err) => write!(f, "AppError::Validation({:?})", err),
         }
     }
 }
@@ -98,6 +101,9 @@ impl ResponseError for AppError {
             // Specific DB errors mapping to client errors
             AppError::Database(SqlxError::RowNotFound) => StatusCode::NOT_FOUND, // 404
             AppError::Database(err) if is_unique_constraint_violation(err) => StatusCode::CONFLICT, // 409
+
+            // Validation errors mapping to client errors
+            AppError::Validation(_) => StatusCode::BAD_REQUEST,
 
             // 5xx Server Errors
             AppError::Database(_) => StatusCode::INTERNAL_SERVER_ERROR, // 500 (Default for DB errors)
@@ -167,6 +173,12 @@ impl AppError {
                     details: None,
                 }
             }
+            AppError::Validation(errors) => ErrorResponseOwnedData {
+                error_category: "Validation Error", // Or "Bad Request"
+                message: Some("Input validation failed. Check details.".to_string()),
+                // Serialize the ValidationErrors into a serde_json::Value for the details field
+                details: serde_json::to_value(errors).ok(), // Use .ok() to ignore serialization errors (shouldn't happen)
+            },
             // Generic Server Errors (avoid leaking internal details)
             AppError::Database(_)
             | AppError::Internal(_)
@@ -203,7 +215,8 @@ pub type AppResult<T> = Result<T, AppError>;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use actix_web::body::to_bytes; // Import directly
+    use actix_web::body::to_bytes;
+    // Import directly
     use actix_web::http::StatusCode;
     use sqlx::error::DatabaseError;
     use std::borrow::Cow;
